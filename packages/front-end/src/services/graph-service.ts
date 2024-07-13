@@ -12,8 +12,7 @@ function subGraph(connections: any[], startNode: string, distance: number) {
             let currentNode = x.connector == startNode ? x.recipent : x.connector;
             additionalConnections.push(...subGraph(connections, currentNode, currrentDistance));
         });
-        console.log('Filtered:', filteredConnections);
-        console.log('Add', additionalConnections);
+
         filteredConnections = mergeArraysUnique(filteredConnections, additionalConnections);
         currrentDistance--;
     }
@@ -28,7 +27,30 @@ function mergeArraysUnique(array1, array2) {
     return uniqueArray;
 }
 
-export const transformData = (data: any, currentNode: string =  data.connections[1].connector, depth: number = 2) => {
+
+
+function getRandomHexColor() {
+    // Genera un número aleatorio entre 0 y 16777215 (decimal) y lo convierte a hexadecimal
+    const randomColor = Math.floor(Math.random() * 16777215).toString(16);
+
+    // Asegúrate de que el resultado tenga 6 caracteres, agregando ceros al inicio si es necesario
+    return `#${randomColor.padStart(6, '0')}`;
+}
+
+const linkColor = (quality: string) => {
+
+    return getRandomHexColor();
+    switch (quality) {
+        case "a":
+            return "#FF0000";
+        case "b":
+            return "#00FF00";
+        default:
+            return "#000000";
+    }
+}
+
+export const transformData = (data: any, depth: number = 4, currentNode: string = data.connections[5].connector) => {
     const nodes = new Set<string>();
     const links: { source: string, target: string }[] = [];
 
@@ -41,16 +63,18 @@ export const transformData = (data: any, currentNode: string =  data.connections
 
         nodes.add(source);
         nodes.add(target);
-        links.push({ source, target });
+        links.push({ source, target, color: linkColor('') });
     });
-    
-    const nodesArray = Array.from(nodes).map(id => ({ id, color: (id == currentNode ? "#FF0000" : "#A6CEE3") }));
+
+    const nodesArray = Array.from(nodes).map(id => ({
+        id,
+        color: (id == currentNode ? "#FF0000" : "#A6CEE3"),
+        label: 'S'
+    }));
 
     let result = {
         nodes: nodesArray,
         links: links
     };
-    console.log(currentNode);
-    console.log(result);
     return result;
 }
