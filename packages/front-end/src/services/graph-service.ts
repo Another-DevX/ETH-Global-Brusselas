@@ -1,14 +1,14 @@
 export const subGraph = (grafo: any, currentNode: any, distancia: number) => {
 
     const nodoInicial = currentNode;
-    const adjacencia = new Map();
-    grafo.nodes.forEach(node => adjacencia.set(node.id, []));
+    const adyacencia = new Map();
+    grafo.nodes.forEach(node => adyacencia.set(node.id, []));
     grafo.links.forEach(link => {
-        adjacencia.get(link.source).push(link.target);
-        adjacencia.get(link.target).push(link.source);
+        adyacencia.get(link.source).push(link.target);
+        adyacencia.get(link.target).push(link.source);
     });
 
-    
+
     const cola = [[nodoInicial, 0]];
     const visitados = new Set();
     const nodosEnDistancia = new Set();
@@ -21,11 +21,17 @@ export const subGraph = (grafo: any, currentNode: any, distancia: number) => {
             if (dist === distancia) {
                 nodosEnDistancia.add(nodo);
             }
-            adjacencia.get(nodo).forEach(adyacente => {
-                if (!visitados.has(adyacente)) {
-                    cola.push([adyacente, dist + 1]);
-                }
-            });
+            // console.log(nodo);
+            // console.log(adyacencia);
+            // debugger
+
+            let adyacentes = adyacencia.get(nodo.id);
+            if (adyacentes)
+                adyacencia.get(nodo.id).forEach(adyacente => {
+                    if (!visitados.has(adyacente)) {
+                        cola.push([adyacente, dist + 1]);
+                    }
+                });
         }
     }
 
@@ -52,7 +58,7 @@ export const transformData = (data: any) => {
 
     const nodesArray = Array.from(nodes).map(id => ({ id }));
 
-    let result =  {
+    let result = {
         nodes: nodesArray,
         links: links
     };
