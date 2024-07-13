@@ -5,7 +5,8 @@ import {IWorldID} from "./interfaces/IWorldID.sol";
 
 contract ConnectionManager {
 
-    mapping(address => bool) private _isVerified;
+    mapping(address => bool) public _isVerified;
+    mapping(address => mapping(address => bool)) public connections;
 
     /// @dev This allows us to use our hashToField function on bytes
     using ByteHasher for bytes;
@@ -59,5 +60,10 @@ contract ConnectionManager {
         nullifierHashes[nullifierHash] = true;
 
         _isVerified[signal] = true;
+    }
+
+    function connect(address connector, address recipent) public {
+        require(!connections[connector][recipent], "The users are connected yet");
+        connections[connector][recipent] = true;
     }
 }
