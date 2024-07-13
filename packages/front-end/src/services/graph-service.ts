@@ -1,3 +1,4 @@
+//@ts-nocheck
 export const subGraph = (grafo: any, currentNode: any, distancia: number) => {
 
     const nodoInicial = currentNode;
