@@ -52,8 +52,12 @@ export const transformData = (data: any) => {
 
     const nodesArray = Array.from(nodes).map(id => ({ id }));
 
-    return {
+    let result =  {
         nodes: nodesArray,
         links: links
     };
+    console.log(result);
+    //result = subGraph(result, result.nodes[0], 1);
+
+    return result;
 }

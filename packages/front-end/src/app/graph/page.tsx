@@ -7,13 +7,6 @@ import { subGraph, transformData } from '@/services/graph-service';
 
 
 
-const filterData = (data: any, depth: number = 1)=>{
-  console.log(data);
-  return subGraph(data,data.nodes[0],  1);
-}
-
-
-
 
 
 const Page = () => {
