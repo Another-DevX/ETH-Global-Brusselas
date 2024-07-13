@@ -2,58 +2,37 @@
 
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
-import { ApolloClient, InMemoryCache, gql, HttpLink, useQuery } from '@apollo/client';
+import {  gql, HttpLink, useQuery } from '@apollo/client';
+import { subGraph, transformData } from '@/services/graph-service';
 
 
 
-const transformData = (data: any) => {
-  const nodes = new Set<string>();
-  const links: { source: string, target: string }[] = [];
-
-  data.connections.forEach((connection: any) => {
-    const source = connection.connector;
-    const target = connection.recipent;
-    nodes.add(source);
-    nodes.add(target);
-    links.push({ source, target });
-  });
-
-  const nodesArray = Array.from(nodes).map(id => ({ id }));
-  
-  return {
-    nodes: nodesArray,
-    links: links
-  };
+const filterData = (data: any, depth: number = 1)=>{
+  console.log(data);
+  return subGraph(data,data.nodes[0],  1);
 }
 
 
 
 
 
-
-
-const genRandomTree = (N = 20, reverse = false) => {
-  const nodes = Array.from({ length: N }, (_, i) => ({ id: i }));
-  const links = [];
-
-  // Generar niveles de conexión
-  for (let i = 1; i < N; i++) {
-    const sourceId = Math.floor((i - 1) / 3);
-    const targetId = i;
-    links.push({
-      [reverse ? 'target' : 'source']: sourceId,
-      [reverse ? 'source' : 'target']: targetId,
-    });
-  }
-
-  return { nodes, links };
-}; 
-
-
-
-
 const Page = () => {
+
   const fgRef = useRef();
+  const handleClick = useCallback(node => {
+    const distance = 10;
+    const distRatio = 1 + distance / Math.hypot(node.x, node.y);
+
+    fgRef.current.centerAt(
+      node.x,
+      node.y,
+      300
+    );    
+   
+
+  }, [fgRef]);
+
+
 
   const GET_CONNECTIONS = gql`
   query {
@@ -67,38 +46,11 @@ const Page = () => {
 `;
 
 
-  const { error, data: graphData, loading } = useQuery(GET_CONNECTIONS);
-  console.debug(graphData, loading)
-
-  const handleClick = useCallback(node => {
-    const distance = 10;
-    const distRatio = 1 + distance / Math.hypot(node.x, node.y);
-
-    fgRef.current.centerAt(
-      node.x,
-      node.y,
-      300
-    );
-    // fgRef.current.zoom(
-    //     5, 3000
-    // );
-
-    // Generar nuevas conexiones desde el nodo clicado
-    const newLinks = Array.from({ length: 3 }, (_, i) => ({
-      source: node.id,
-      target: (graphData.nodes.length + i).toString(),
-    }));
-
-
- /*    setGraphData(prevData => {
-      const { nodes, links } = prevData;
-      const id = nodes.length;
-      return {
-        nodes: [...nodes, { id }],
-        links: [...links, { source: id, target: Math.round(Math.random() * (id - 1)) }]
-      };
-    }) */
-  }, [fgRef, graphData]);
+  const { error, data, loading } = useQuery(GET_CONNECTIONS);
+  
+  
+  
+ 
   if(loading) return <p>Loading...</p>
   return (
     <ForceGraph2D
@@ -106,7 +58,7 @@ const Page = () => {
       onNodeClick={handleClick}
 
       nodeAutoColorBy='group'
-      graphData={transformData(graphData)}
+      graphData={transformData(data)}
     />
   );
 };
