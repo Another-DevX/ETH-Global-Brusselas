@@ -1,47 +1,52 @@
 // (If using Next.js - IDKitWidget must be run on client)
 "use client"
+import { NDEFReader } from '@/types/nfc';
+import React, { useState, useEffect } from 'react';
 
-import React, { useState } from 'react';
+const NFCReader: React.FC = () => {
+    const [nfcSupported, setNfcSupported] = useState<boolean>(false);
+    const [tagContent, setTagContent] = useState<string>('');
 
+    useEffect(() => {
+        // Verificar si el navegador soporta la API NFC
+        if ('NDEFReader' in window) {
+            setNfcSupported(true);
+        } else {
+            console.log('Web NFC no está soportado en este navegador.');
+        }
+    }, []);
 
-export default function NfcRead() {
+    const handleNfcReading = async () => {
+        try {
+            const ndef: NDEFReader = window.NDEFReader;
+            await ndef.scan();
 
-    const [output, setOutput] = useState("Pulsa el botón para escanear una etiqueta NFC.");
-
-  const handleScan = async () => {
-    if ('NDEFReader' in window) {
-      try {
-        const ndef = new NDEFReader();
-        await ndef.scan();
-        setOutput("Esperando a que la etiqueta NFC esté cerca...");
-
-        ndef.onreading = event => {
-          const decoder = new TextDecoder();
-          let newOutput = "";
-          for (const record of event.message.records) {
-            newOutput += `\nTipo de registro: ${record.recordType}`;
-            newOutput += `\nMIME type: ${record.mediaType}`;
-            newOutput += `\nContenido: ${decoder.decode(record.data)}\n`;
-          }
-          setOutput(newOutput);
-        };
-
-        ndef.onreadingerror = () => {
-          setOutput("Error al leer la etiqueta NFC. Inténtalo de nuevo.");
-        };
-      } catch (error) {
-        setOutput(`Error: ${error}`);
-      }
-    } else {
-      setOutput("La API Web NFC no es compatible con este navegador.");
-    }
-  };
+            ndef.onreading = (event) => {
+                const message = event.message;
+                if (message.records.length > 0) {
+                    const payload = message.records[0].data;
+                    const textDecoder = new TextDecoder();
+                    const decodedPayload = textDecoder.decode(payload);
+                    setTagContent(decodedPayload);
+                }
+            };
+        } catch (error) {
+            console.error('Error al leer NFC:', error);
+        }
+    };
 
     return (
         <div>
-          <h1>Lectura de datos NFC</h1>
-          <button onClick={handleScan}>Escanear NFC</button>
-          <pre>{output}</pre>
+            {nfcSupported ? (
+                <div>
+                    <button onClick={handleNfcReading}>Leer NFC</button>
+                    {tagContent && <p>Contenido del tag NFC: {tagContent}</p>}
+                </div>
+            ) : (
+                <p>Web NFC no está soportado en este navegador.</p>
+            )}
         </div>
-      );
-}
+    );
+};
+
+export default NFCReader;

@@ -1,41 +1,59 @@
 "use client"
-import React, { useState } from 'react';
+import { NDEFWriter } from '@/types/nfc';
+import React, { useState, useEffect } from 'react';
 
-function NfcWrite() {
-  const [message, setMessage] = useState('');
-  const [output, setOutput] = useState('');
+const NFCWriter: React.FC = () => {
+    const [nfcSupported, setNfcSupported] = useState<boolean>(false);
+    const [messageToWrite, setMessageToWrite] = useState<string>('');
 
-  const handleInputChange = (event) => {
-    setMessage(event.target.value);
-  };
+    const initializeNFCWriter = async () => {
+        try {
+            // Verificar si el navegador soporta la API NFC
+            if ('NDEFReader' in window && 'NDEFWriter' in window) {
+                setNfcSupported(true);
+            } else {
+                console.log('Web NFC no está soportado en este navegador.');
+                return;
+            }
+        } catch (error) {
+            console.error('Error al inicializar NFC:', error);
+        }
+    };
 
-  const handleWrite = async () => {
-    if ('NDEFWriter' in window) {
-      try {
-        const ndef = new NDEFWriter();
-        await ndef.write({ records: [{ recordType: 'text', data: message }] });
-        setOutput('¡Escritura exitosa en la etiqueta NFC!');
-      } catch (error) {
-        setOutput(`Error al escribir en la etiqueta NFC: ${error}`);
-      }
-    } else {
-      setOutput('La API Web NFC no es compatible con este navegador.');
-    }
-  };
+    const handleWriteNFC = async () => {
+        try {
+            const ndef: NDEFReader = window.NDEFReader();
+            await ndef.scan();
 
-  return (
-    <div>
-      <h1>Escribir datos en una etiqueta NFC</h1>
-      <input
-        type="text"
-        value={message}
-        onChange={handleInputChange}
-        placeholder="Escribe tu mensaje aquí"
-      />
-      <button onClick={handleWrite}>Escribir en NFC</button>
-      <pre>{output}</pre>
-    </div>
-  );
-}
+            const ndefWriter: NDEFWriter = window.NDEFWriter();
+            await ndefWriter.write(messageToWrite);
 
-export default NfcWrite;
+            console.log('Mensaje escrito en el tag NFC:', messageToWrite);
+            alert('Mensaje escrito correctamente en el tag NFC.');
+        } catch (error) {
+            console.error('Error al escribir NFC:', error);
+            alert('Error al escribir NFC. Verifica la consola para más detalles.');
+        }
+    };
+
+    return (
+        <div>
+            <button onClick={initializeNFCWriter}>Inicializar NFC</button>
+            {nfcSupported ? (
+                <div>
+                    <input
+                        type="text"
+                        value={messageToWrite}
+                        onChange={(e) => setMessageToWrite(e.target.value)}
+                        placeholder="Ingresa el mensaje a escribir en el tag NFC"
+                    />
+                    <button onClick={handleWriteNFC}>Escribir en NFC</button>
+                </div>
+            ) : (
+                <p>Web NFC no está soportado en este navegador.</p>
+            )}
+        </div>
+    );
+};
+
+export default NFCWriter;
