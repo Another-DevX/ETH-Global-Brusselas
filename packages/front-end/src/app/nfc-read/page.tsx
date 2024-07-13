@@ -20,7 +20,7 @@ const NFCReader: React.FC = () => {
                 alert('NFC Reader is ready');
                 await ndef.scan();
 
-                ndef.onreading = event => {                    
+                ndef.onreading = (event: any) => {                    
 
                     if (event.message.records.length > 0) {
                         const decoder = new TextDecoder();
