@@ -1,5 +1,4 @@
 "use client"
-import { NDEFReader } from '@/types/nfc';
 import React, { useState, useEffect } from 'react';
 
 const NFCReader: React.FC = () => {
@@ -16,10 +15,10 @@ const NFCReader: React.FC = () => {
 
     const handleNfcReading = async () => {
         try {
-            const ndef: NDEFReader = (window as any).NDEFReader;
+            const ndef: any = (window as any).NDEFReader;
             await ndef.scan();
 
-            ndef.onreading = (event) => {
+            ndef.onreading = (event: any) => {
                 const message = event.message;
                 if (message.records.length > 0) {
                     const payload = message.records[0].data;

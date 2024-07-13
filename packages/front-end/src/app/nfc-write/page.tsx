@@ -1,5 +1,4 @@
 "use client"
-import { NDEFWriter } from '@/types/nfc';
 import React, { useState, useEffect } from 'react';
 
 const NFCWriter: React.FC = () => {
@@ -22,10 +21,10 @@ const NFCWriter: React.FC = () => {
 
     const handleWriteNFC = async () => {
         try {
-            const ndef: NDEFReader = window.NDEFReader();
+            const ndef: any = (window as any).NDEFReader();
             await ndef.scan();
 
-            const ndefWriter: NDEFWriter = window.NDEFWriter();
+            const ndefWriter: any = (window as any).NDEFWriter();
             await ndefWriter.write(messageToWrite);
 
             console.log('Mensaje escrito en el tag NFC:', messageToWrite);
