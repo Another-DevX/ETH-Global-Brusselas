@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@apollo/client": "^3.10.8",
     "@ethereum-attestation-service/eas-sdk": "^2.5.0",
     "@privy-io/react-auth": "^1.74.1",
     "@privy-io/wagmi": "^0.2.12",
@@ -16,6 +17,7 @@
     "@worldcoin/idkit": "^1.2.2",
     "axios": "^1.7.2",
     "ethers": "^6.13.1",
+    "graphql": "^16.9.0",
     "next": "14.2.5",
     "react": "^18",
     "react-dom": "^18",

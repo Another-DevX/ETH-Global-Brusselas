@@ -2,6 +2,60 @@
 
 import React, { useCallback, useRef, useState, useEffect } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
+import { ApolloClient, InMemoryCache, gql, HttpLink } from '@apollo/client';
+
+const getGraphInfo = ()=> {
+
+  
+};
+
+const client = new ApolloClient({
+  link: new HttpLink({ uri: 'https://api.studio.thegraph.com/query/83101/multi-plug/version/latest' }), // Reemplaza 'YOUR_GRAPHQL_API_URL' con la URL de tu API GraphQL
+  cache: new InMemoryCache()
+});
+
+const GET_CONNECTIONS = gql`
+  query {
+    connections {
+      id
+      connector
+      recipent
+      blockNumber
+    }
+  }
+`;
+
+function transformData(data: any) {
+  const nodes = new Set<string>();
+  const edges: { source: string, target: string }[] = [];
+
+  data.connections.forEach((connection: any) => {
+    const source = connection.connector;
+    const target = connection.recipent;
+    nodes.add(source);
+    nodes.add(target);
+    edges.push({ source, target });
+  });
+
+  const nodesArray = Array.from(nodes).map(id => ({ id }));
+  
+  return {
+    nodes: nodesArray,
+    edges: edges
+  };
+}
+
+// Función para obtener y procesar los datos
+async function fetchGraphData() {
+  try {
+    const result = await client.query({ query: GET_CONNECTIONS });    
+    return transformData(result.data);
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+}
+
+
 
 const genRandomTree = (N = 20, reverse = false) => {
     const nodes = Array.from({ length: N }, (_, i) => ({ id: i }));
@@ -22,7 +76,7 @@ const genRandomTree = (N = 20, reverse = false) => {
 
 const Page = () => {
   const fgRef = useRef();
-  const [graphData, setGraphData] = useState(genRandomTree(20));
+  const [graphData, setGraphData] = useState(fetchGraphData());
 
 
   const handleClick = useCallback(node => {
