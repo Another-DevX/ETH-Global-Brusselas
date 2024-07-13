@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useRef, useState, useEffect } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
 
 const genRandomTree = (N = 20, reverse = false) => {
-    const nodes = Array.from({ length: N }, (_, i) => ({ id: i.toString() }));
+    const nodes = Array.from({ length: N }, (_, i) => ({ id: i }));
     const links = [];
 
     // Generar niveles de conexión
@@ -12,48 +12,57 @@ const genRandomTree = (N = 20, reverse = false) => {
         const sourceId = Math.floor((i - 1) / 3);
         const targetId = i;
         links.push({
-            [reverse ? 'target' : 'source']: sourceId.toString(),
-            [reverse ? 'source' : 'target']: targetId.toString(),
+            [reverse ? 'target' : 'source']: sourceId,
+            [reverse ? 'source' : 'target']: targetId,
         });
     }
 
     return { nodes, links };
 };
 
-function Page() {
-    const fgRef = useRef();
-    const [graphData, setGraphData] = useState(genRandomTree());
+const Page = () => {
+  const fgRef = useRef();
+  const [graphData, setGraphData] = useState(genRandomTree(20));
 
-    const handleClick = useCallback(node => {
-        const distance = 10;
-        const distRatio = 1 + distance / Math.hypot(node.x, node.y);
 
-        fgRef.current.centerAt(
-            node.x,
-            node.y, 
-            300  
-        );
-        // fgRef.current.zoom(
-        //     5, 3000
-        // );
+  const handleClick = useCallback(node => {
+    const distance = 10;
+    const distRatio = 1 + distance / Math.hypot(node.x, node.y);
 
-        // Generar nuevas conexiones desde el nodo clicado
-        const newLinks = Array.from({ length: 3 }, (_, i) => ({
-            source: node.id.toString(),
-            target: (parseInt(node.id) * 3 + i + 1).toString(),
-        })).filter(link => parseInt(link.target) < graphData.nodes.length);
+    fgRef.current.centerAt(
+        node.x,
+        node.y, 
+        300  
+    );
+    // fgRef.current.zoom(
+    //     5, 3000
+    // );
 
-        setGraphData(genRandomTree());
-    }, [fgRef, graphData.nodes.length]);
+    // Generar nuevas conexiones desde el nodo clicado
+    const newLinks = Array.from({ length: 3 }, (_, i) => ({
+        source: node.id,
+        target: (graphData.nodes.length + i).toString(),
+    }));
 
-    return (
-        <ForceGraph2D
-            ref={fgRef}
-            onNodeClick={handleClick}
-            nodeAutoColorBy='group'
-            graphData={graphData}
-        />
-    )
-}
+
+    setGraphData(prevData => {
+        const { nodes, links } = prevData;
+        const id = nodes.length;
+        return {
+          nodes: [...nodes, { id }],
+          links: [...links, { source: id, target: Math.round(Math.random() * (id - 1)) }]
+        };
+      })
+  }, [fgRef, graphData.nodes.length]);
+
+  return (
+    <ForceGraph2D
+      ref={fgRef}
+      onNodeClick={handleClick}
+      nodeAutoColorBy='group'
+      graphData={graphData}
+    />
+  );
+};
 
 export default Page;
