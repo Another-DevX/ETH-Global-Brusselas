@@ -64,6 +64,7 @@ contract ConnectionManager {
 
     function connect(address connector, address recipent) public {
         require(!connections[connector][recipent], "The users are connected yet");
+        require(_isVerified[connector] && _isVerified[recipent], "The users are not verified yet");
         connections[connector][recipent] = true;
     }
 }
