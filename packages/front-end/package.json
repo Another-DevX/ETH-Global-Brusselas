@@ -13,6 +13,7 @@
     "@privy-io/wagmi": "^0.2.12",
     "@tanstack/react-query": "^5.51.1",
     "@worldcoin/idkit": "^1.2.2",
+    "axios": "^1.7.2",
     "next": "14.2.5",
     "react": "^18",
     "react-dom": "^18",

@@ -1,5 +1,4 @@
 import { createPublicClient, createWalletClient, http } from 'viem'
-import { account, walletClient } from './config'
 import abi from '@/constants/ConnectionManager.abi.json'
 import { baseSepolia } from 'viem/chains'
 import { privateKeyToAccount } from 'viem/accounts'
@@ -7,7 +6,7 @@ import { privateKeyToAccount } from 'viem/accounts'
 
 export async function POST(req: Request, res: Response) {
 
-    const { user, recipent } = req.body
+    const { user, recipent } = await req.json()
 
     const publicClient = createPublicClient({
         chain: baseSepolia,
