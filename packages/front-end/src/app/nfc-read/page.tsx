@@ -1,4 +1,3 @@
-// (If using Next.js - IDKitWidget must be run on client)
 "use client"
 import { NDEFReader } from '@/types/nfc';
 import React, { useState, useEffect } from 'react';
@@ -8,7 +7,6 @@ const NFCReader: React.FC = () => {
     const [tagContent, setTagContent] = useState<string>('');
 
     useEffect(() => {
-        // Verificar si el navegador soporta la API NFC
         if ('NDEFReader' in window) {
             setNfcSupported(true);
         } else {
@@ -18,15 +16,16 @@ const NFCReader: React.FC = () => {
 
     const handleNfcReading = async () => {
         try {
-            const ndef: NDEFReader = window.NDEFReader;
+            const ndef: NDEFReader = (window as any).NDEFReader;
             await ndef.scan();
 
             ndef.onreading = (event) => {
                 const message = event.message;
                 if (message.records.length > 0) {
                     const payload = message.records[0].data;
+                    if(!payload) return
                     const textDecoder = new TextDecoder();
-                    const decodedPayload = textDecoder.decode(payload);
+                    const decodedPayload = textDecoder.decode(payload as ArrayBuffer);
                     setTagContent(decodedPayload);
                 }
             };
