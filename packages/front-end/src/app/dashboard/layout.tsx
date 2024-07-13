@@ -22,8 +22,10 @@ export default function DashboardLayout({
         abi,
         address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as `0x${string}`,
         functionName: '_isVerified',
-        args: [address!]
+        args: [address!],
+        
     })
+
 
     const { writeContractAsync } = useWriteContract()
     const account = useAccount()
@@ -32,6 +34,7 @@ export default function DashboardLayout({
 
     const verifyProof = async (proof: ISuccessResult) => {
         try {
+            console.debug(process.env.NEXT_PUBLIC_CONTRACT_ADDRESS)
             console.debug(
                 {
                     args: [
@@ -43,7 +46,6 @@ export default function DashboardLayout({
                             proof!.proof as `0x${string}`
                         )[0],
                     ],
-
                 }
             )
             await writeContractAsync({
@@ -62,7 +64,8 @@ export default function DashboardLayout({
                 ],
             })
             console.debug('Proof verified')
-        } catch (error) { throw new Error((error as BaseError).shortMessage) }
+            result.refetch()
+        } catch (error) { throw new Error((error as BaseError)) }
     }
 
     const onSuccess = () => {
@@ -80,9 +83,25 @@ export default function DashboardLayout({
                                 className=" gap-2  flex justify-center items-center"
                             >
                                 {
-                                    result && <img src="https://cryptologos.cc/logos/worldcoin-org-wld-logo.png"
+                                    result.data ? <img src="https://cryptologos.cc/logos/worldcoin-org-wld-logo.png"
                                         className="w-8 h-8"
-                                    />
+                                    /> :
+                                        <IDKitWidget
+                                            app_id="app_staging_4989e6a8b385ae6116fb36aeae08c250"
+                                            action="verify-public-address"
+                                            verification_level={VerificationLevel.Orb}
+                                            onSuccess={verifyProof}
+                                            signal={account.address}
+
+                                        >
+                                            {({ open }) => (
+
+                                                <img onClick={open} src="https://cryptologos.cc/logos/worldcoin-org-wld-logo.png"
+                                                    className="w-8 h-8 opacity-50 cursor-pointer"
+                                                />
+
+                                            )}
+                                        </IDKitWidget>
                                 }
                                 <DropdownTrigger>
 
@@ -97,26 +116,6 @@ export default function DashboardLayout({
                                 <DropdownItem key="new">Inbox</DropdownItem>
                                 <DropdownItem key="copy">Graph Length</DropdownItem>
                                 <DropdownItem key="copy">Settings</DropdownItem>
-
-                                {!result &&
-                                    <DropdownItem key="verified">
-                                        <IDKitWidget
-                                            app_id="app_staging_4989e6a8b385ae6116fb36aeae08c250"
-                                            action="verify-public-address"
-                                            verification_level={VerificationLevel.Orb}
-                                            onSuccess={verifyProof}
-                                            signal={account.address}
-                                        >
-                                            {({ open }) => (
-                                                <Button className="flex gap-2" onClick={open} variant="bordered">
-                                                    <img src="https://cryptologos.cc/logos/worldcoin-org-wld-logo.png"
-                                                        className="w-4 h-4"
-                                                    />
-                                                    Verify with worldcoin</Button>
-                                            )}
-                                        </IDKitWidget>
-                                    </DropdownItem>
-                                }
                                 <DropdownItem key="disconnect">
                                     <Button size="sm" variant="solid" fullWidth color="danger">
                                         Disconect

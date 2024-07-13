@@ -21,12 +21,14 @@ function Page() {
         }
     }, [connector])  
     const handleConnect = async () => {
+
         try {
             setIsConnecting(true)
-            await axios.post('/connect', {
+            const response = await axios.post('/api/connect', {
                 user: address,
-                recipent: connector
+                recipient: connector
             })
+            console.debug(response)
             setIsConnecting(false)
         } catch (e) {
             console.error(e)
