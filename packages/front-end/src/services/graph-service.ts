@@ -1,54 +1,42 @@
-export const subGraph = (grafo: any, currentNode: any, distancia: number) => {
-
-    const nodoInicial = currentNode;
-    const adyacencia = new Map();
-    grafo.nodes.forEach(node => adyacencia.set(node.id, []));
-    grafo.links.forEach(link => {
-        adyacencia.get(link.source).push(link.target);
-        adyacencia.get(link.target).push(link.source);
-    });
 
 
-    const cola = [[nodoInicial, 0]];
-    const visitados = new Set();
-    const nodosEnDistancia = new Set();
+function subGraph(connections: any[], startNode: string, distance: number) {
 
-    while (cola.length > 0) {
-        const [nodo, dist] = cola.shift();
-        if (dist > distancia) continue;
-        if (!visitados.has(nodo)) {
-            visitados.add(nodo);
-            if (dist === distancia) {
-                nodosEnDistancia.add(nodo);
-            }
-            // console.log(nodo);
-            // console.log(adyacencia);
-            // debugger
-
-            let adyacentes = adyacencia.get(nodo.id);
-            if (adyacentes)
-                adyacencia.get(nodo.id).forEach(adyacente => {
-                    if (!visitados.has(adyacente)) {
-                        cola.push([adyacente, dist + 1]);
-                    }
-                });
-        }
+    let currrentDistance = distance;
+    let filteredConnections = connections.filter(x => x.connector == startNode || x.recipent == startNode);
+    currrentDistance--;
+    let additionalConnections: any[] = [];
+    while (currrentDistance > 0) {
+        filteredConnections.forEach(x => {
+            let currentNode = x.connector == startNode ? x.recipent : x.connector;
+            additionalConnections.push(...subGraph(connections, currentNode, currrentDistance));
+        });
+        console.log('Filtered:', filteredConnections);
+        console.log('Add', additionalConnections);
+        filteredConnections = mergeArraysUnique(filteredConnections, additionalConnections);
+        currrentDistance--;
     }
 
-    const subgrafo = {
-        nodes: Array.from(nodosEnDistancia).map(id => ({ id })),
-        links: grafo.links.filter(
-            link => nodosEnDistancia.has(link.source) && nodosEnDistancia.has(link.target)
-        )
-    };
 
-    return subgrafo;
+    return filteredConnections;
 }
 
-export const transformData = (data: any) => {
+function mergeArraysUnique(array1, array2) {
+    const combinedArray = array1.concat(array2);
+    const uniqueArray = combinedArray.filter((item, index) => combinedArray.indexOf(item) === index);
+    return uniqueArray;
+}
+
+export const transformData = (data: any, currentNode: any, depth: number = 1) => {
     const nodes = new Set<string>();
     const links: { source: string, target: string }[] = [];
-    data.connections.forEach((connection: any) => {
+
+
+
+    const filteredData = subGraph(data.connections, currentNode ?? data.connections[0].connector, depth);
+
+
+    filteredData.forEach((connection: any) => {
         const source = connection.connector;
         const target = connection.recipent;
         nodes.add(source);
@@ -62,8 +50,6 @@ export const transformData = (data: any) => {
         nodes: nodesArray,
         links: links
     };
-    console.log(result);
-    result = subGraph(result, result.nodes[0], 1);
 
     return result;
 }
