@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+=======
+//@ts-nocheck
+export const subGraph = (grafo: any, currentNode: any, distancia: number) => {
+>>>>>>> 0f8df4c486e1c1e0f4d2b7fc0989727473be5ac1
 
 
 function subGraph(connections: any[], startNode: string, distance: number) {
