@@ -1,0 +1,8 @@
+type Connection @entity(immutable: true) {
+  id: Bytes!
+  connector: Bytes! # address
+  recipent: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
