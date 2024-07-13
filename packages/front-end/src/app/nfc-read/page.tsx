@@ -2,19 +2,19 @@
 import { usePrivy } from '@privy-io/react-auth';
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import { useAccount } from 'wagmi';
 
 const NFCReader: React.FC = () => {
     const [nfcSupported, setNfcSupported] = useState<boolean>(false);
     const [tagContent, setTagContent] = useState<string>('');
     const { ready, login } = usePrivy();
 
-    const { address } = useAccount()
+    
 
 
     const handleNfcReading = async () => {
+        
         if ("NDEFReader" in window) {
-
+            alert('hola');
             try {
                 const ndef: any = (window as any).NDEFReader;
                 alert('NFC Reader is ready');
@@ -44,9 +44,7 @@ const NFCReader: React.FC = () => {
 
     return (
         <div>
-            <button disabled={!ready} onClick={login}>
-                Log in
-            </button>
+         
             <div>
                 <button onClick={handleNfcReading}>Leer NFC</button>
                 {tagContent && <p>Contenido del tag NFC: {tagContent}</p>}
