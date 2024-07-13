@@ -11,32 +11,32 @@ function Page() {
     const searchParams = useSearchParams()
     const { push } = useRouter()
     const [isConnecting, setIsConnecting] = useState(false)
-    // const { address } = useAccount()
-    // const connector = searchParams.get('address')
-    // const isLoggedIn = useIsLoggedIn();
+    const { address } = useAccount()
+    const connector = searchParams.get('address')
+    const isLoggedIn = useIsLoggedIn();
 
-    // useEffect(() => {
-    //     if (!connector) {
-    //         push('/dashboard')
-    //     }
-    // }, [connector])  
-    // const handleConnect = async () => {
-    //     try {
-    //         setIsConnecting(true)
-    //         await axios.post('/connect', {
-    //             user: address,
-    //             recipent: connector
-    //         })
-    //         setIsConnecting(false)
-    //     } catch (e) {
-    //         console.error(e)
-    //     }
-    // }
+    useEffect(() => {
+        if (!connector) {
+            push('/dashboard')
+        }
+    }, [connector])  
+    const handleConnect = async () => {
+        try {
+            setIsConnecting(true)
+            await axios.post('/connect', {
+                user: address,
+                recipent: connector
+            })
+            setIsConnecting(false)
+        } catch (e) {
+            console.error(e)
+        }
+    }
     return (
         <div className='min-h-screen flex justify-center items-center flex-col gap-4'>
             <h2 className='text-lg font-semibold text-center'>Do you want to connect with anotherdev.eth?</h2>
 
-            {/* {
+            {
                 isLoggedIn ? <div className='flex gap-2'>
                     <Button variant='shadow' color='primary' onClick={handleConnect} isLoading={isConnecting}>
                         Connect
@@ -52,7 +52,7 @@ function Page() {
                     </DynamicConnectButton>
 
 
-            } */}
+            }
 
         </div>
     )
