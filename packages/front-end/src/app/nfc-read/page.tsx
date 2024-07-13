@@ -8,24 +8,24 @@ const NFCReader: React.FC = () => {
     const [tagContent, setTagContent] = useState<string>('');
     const { ready, login } = usePrivy();
 
-    
+
 
 
     const handleNfcReading = async () => {
-        
         if ("NDEFReader" in window) {
-            
+
             try {
-                const ndef: any = (window as any).NDEFReader;
-                alert('NFC Reader is ready');
+      
+                const ndef = new (window as any).NDEFReader()
+      
                 await ndef.scan();
-
-                ndef.onreading = (event: any) => {                    
-
+                alert('Please scan!');
+                ndef.onreading = (event: any) => {
+      
                     if (event.message.records.length > 0) {
                         const decoder = new TextDecoder();
                         const payload = decoder.decode(event.message.records[0].data);
-                        if (!payload) return                      
+                        if (!payload) return
                         alert(payload);
                         setTagContent(payload);
                         // axios.post('/connect', {
@@ -36,17 +36,20 @@ const NFCReader: React.FC = () => {
                     }
                 };
             } catch (error) {
-                console.error('Error al leer NFC:', error);
+                alert('Error al leer NFC:' + error);
             }
-        }else{
-            alert('hola');
+        } else {
+            alert('NFC not present!');
         }
-
     };
 
     return (
+        
         <div>
-         <span>Please scan:</span>
+            <script src='assets/nfc.js'>
+         
+            </script>
+            <span>Please scan:</span>
             <div>
                 <button onClick={handleNfcReading}>Leer NFC</button>
                 {tagContent && <p>Contenido del tag NFC: {tagContent}</p>}
