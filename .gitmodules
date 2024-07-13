@@ -1,0 +1,3 @@
+[submodule "packages/smart-contracwts/lib/forge-std"]
+	path = packages/smart-contracwts/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
