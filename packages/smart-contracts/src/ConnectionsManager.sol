@@ -5,6 +5,8 @@ import {IWorldID} from "./interfaces/IWorldID.sol";
 
 contract ConnectionManager {
 
+    event Connection(address indexed connector, address indexed recipent);
+
     mapping(address => bool) public _isVerified;
     mapping(address => mapping(address => bool)) public connections;
 
@@ -64,7 +66,7 @@ contract ConnectionManager {
 
     function connect(address connector, address recipent) public {
         require(!connections[connector][recipent], "The users are connected yet");
-        require(_isVerified[connector] && _isVerified[recipent], "The users are not verified yet");
         connections[connector][recipent] = true;
+        emit Connection(connector, recipent);
     }
 }
