@@ -1,6 +1,6 @@
 
 'use client'
-import React from "react";
+import React, { createContext, useContext, useState } from "react";
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem, Button, Input, Slider } from "@nextui-org/react";
 import { useAccount, useReadContract, useWriteContract } from 'wagmi'
 import abi from '@/constants/ConnectionManager.abi.json'
@@ -12,12 +12,19 @@ import { DynamicConnectButton, DynamicWidget, useIsLoggedIn, useWalletItemAction
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
 
+export const DashboardContext = createContext(3);
+
+export const useDashboardContext = () => {
+    return useContext(DashboardContext);
+}
+
 export default function DashboardLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
     const { address } = useAccount()
+    const [depth, setDepth] = useState(3)
 
     const result = useReadContract({
         abi,
@@ -77,120 +84,160 @@ export default function DashboardLayout({
     };
 
     return (
-        <div className="min-h-screen w-full relative">
-            <div className=" flex flex-row-reverse justify-between items-center absolute top-5 px-5 w-full">
-                {
-                    account.isConnected ?
+        <DashboardContext.Provider value={depth}>
 
-                        <Dropdown
-                            shouldCloseOnInteractOutside={(e) => false}
-                            closeOnSelect={false}
-                        >
-                            <div
-                                className=" gap-2  flex justify-center items-center"
+            <div className="min-h-screen w-full relative">
+                <div className=" flex flex-row-reverse justify-between items-center absolute top-5 px-5 w-full">
+                    {
+                        account.isConnected ?
+
+                            <Dropdown
+                                shouldCloseOnInteractOutside={(e) => false}
+                                closeOnSelect={false}
                             >
-                                {
-                                    result.data ? <img src="https://cryptologos.cc/logos/worldcoin-org-wld-logo.png"
-                                        className="w-8 h-8"
-                                    /> :
-                                        <IDKitWidget
-                                            app_id="app_staging_4989e6a8b385ae6116fb36aeae08c250"
-                                            action="verify-public-address"
-                                            verification_level={VerificationLevel.Orb}
-                                            onSuccess={verifyProof}
-                                            signal={account.address}
+                                <div
+                                    className=" gap-2  flex justify-center items-center"
+                                >
+                                    {
+                                        result.data ? <img src="https://cryptologos.cc/logos/worldcoin-org-wld-logo.png"
+                                            className="w-8 h-8"
+                                        /> :
+                                            <IDKitWidget
+                                                app_id="app_staging_4989e6a8b385ae6116fb36aeae08c250"
+                                                action="verify-public-address"
+                                                verification_level={VerificationLevel.Orb}
+                                                onSuccess={verifyProof}
+                                                signal={account.address}
 
+                                            >
+                                                {({ open }) => (
+
+                                                    <img onClick={open} src="https://cryptologos.cc/logos/worldcoin-org-wld-logo.png"
+                                                        className="w-8 h-8 opacity-50 cursor-pointer"
+                                                    />
+
+                                                )}
+                                            </IDKitWidget>
+                                    }
+                                    <DropdownTrigger>
+
+                                        <Button
+                                            variant="bordered"
                                         >
-                                            {({ open }) => (
+                                            anotherdev.eth
+                                        </Button>
+                                    </DropdownTrigger>
+                                </div>
+                                <DropdownMenu aria-label="Static Actions">
+                                    <DropdownItem key="new">Inbox</DropdownItem>
+                                    <DropdownItem key="copy">
+                                        <Popover
+                                            offset={30}
+                                            placement="right">
+                                            <PopoverTrigger>
+                                                <p>Settings</p>
+                                            </PopoverTrigger>
+                                            <PopoverContent>
+                                                <div className="px-1 py-2">
+                                                    <div className="text-small font-bold">Select the max user tier able to send DMs to you.</div>
+                                                    <Slider
+                                                        size="md"
+                                                        step={1}
+                                                        color="foreground"
+                                                        label="Length"
+                                                        showSteps={true}
+                                                        maxValue={10}
+                                                        minValue={1}
+                                                        defaultValue={3}
+                                                        className="max-w-md"
+                                                    />
+                                                </div>
+                                            </PopoverContent>
+                                        </Popover>
+                                    </DropdownItem>
+                                    <DropdownItem key="copy">
+                                        <Popover
+                                            offset={30}
+                                            placement="right">
+                                            <PopoverTrigger>
+                                                <p>Graph Length</p>
+                                            </PopoverTrigger>
+                                            <PopoverContent>
+                                                <div className="px-1 py-2">
+                                                    <div className="text-small font-bold">Select the max graph tier visible</div>
+                                                    <Slider
+                                                        onChange={(value) => setDepth(value as number)}
+                                                        size="md"
+                                                        step={1}
+                                                        color="foreground"
+                                                        label="Length"
+                                                        showSteps={true}
+                                                        maxValue={10}
+                                                        minValue={1}
+                                                        defaultValue={3}
+                                                        className="max-w-md"
+                                                    />
+                                                </div>
+                                            </PopoverContent>
+                                        </Popover>
+                                    </DropdownItem>
+                                    <DropdownItem key="disconnect">
+                                        <Button size="sm" variant="solid" onClick={async () => {
+                                            await handleLogOut()
+                                            router.replace('/')
+                                        }} fullWidth color="danger">
+                                            Disconect
+                                        </Button>
+                                    </DropdownItem>
 
-                                                <img onClick={open} src="https://cryptologos.cc/logos/worldcoin-org-wld-logo.png"
-                                                    className="w-8 h-8 opacity-50 cursor-pointer"
-                                                />
+                                </DropdownMenu>
+                            </Dropdown>
+                            : <DynamicConnectButton>
+                                <div className="px-4 py-2  bg-default rounded-md">
+                                    Log-In
+                                </div>
+                            </DynamicConnectButton>
+                    }
 
-                                            )}
-                                        </IDKitWidget>
-                                }
-                                <DropdownTrigger>
+                    <div className="w-1/2 hidden md:block">
 
-                                    <Button
-                                        variant="bordered"
-                                    >
-                                        anotherdev.eth
-                                    </Button>
-                                </DropdownTrigger>
-                            </div>
-                            <DropdownMenu aria-label="Static Actions">
-                                <DropdownItem key="new">Inbox</DropdownItem>
-                                <DropdownItem key="copy">
-                                <Popover
-                                        offset={30}
-                                        placement="right">
-                                        <PopoverTrigger>
-                                            <p>Settings</p>
-                                        </PopoverTrigger>
-                                        <PopoverContent>
-                                            <div className="px-1 py-2">
-                                                <div className="text-small font-bold">Select the max user tier able to send DMs to you.</div>
-                                                <Slider
-                                                    size="md"
-                                                    step={1}
-                                                    color="foreground"
-                                                    label="Length"
-                                                    showSteps={true}
-                                                    maxValue={10}
-                                                    minValue={1}
-                                                    defaultValue={3}
-                                                    className="max-w-md"
-                                                />
-                                            </div>
-                                        </PopoverContent>
-                                    </Popover>
-                                </DropdownItem>
-                                <DropdownItem key="copy">
-                                    <Popover
-                                        offset={30}
-                                        placement="right">
-                                        <PopoverTrigger>
-                                            <p>Graph Length</p>
-                                        </PopoverTrigger>
-                                        <PopoverContent>
-                                            <div className="px-1 py-2">
-                                                <div className="text-small font-bold">Select the max graph tier visible</div>
-                                                <Slider
-                                                    size="md"
-                                                    step={1}
-                                                    color="foreground"
-                                                    label="Length"
-                                                    showSteps={true}
-                                                    maxValue={10}
-                                                    minValue={1}
-                                                    defaultValue={3}
-                                                    className="max-w-md"
-                                                />
-                                            </div>
-                                        </PopoverContent>
-                                    </Popover>
-                                </DropdownItem>
-                                <DropdownItem key="disconnect">
-                                    <Button size="sm" variant="solid" onClick={async () => {
-                                        await handleLogOut()
-                                        router.replace('/')
-                                    }} fullWidth color="danger">
-                                        Disconect
-                                    </Button>
-                                </DropdownItem>
+                        <Input
+                            label="Search"
+                            isClearable
+                            radius="lg"
+                            classNames={{
+                                label: "text-black/50 dark:text-white/90",
+                                input: [
+                                    "bg-transparent",
+                                    "text-black/90 dark:text-white/90",
+                                    "placeholder:text-default-700/50 dark:placeholder:text-white/60",
+                                ],
+                                innerWrapper: "bg-transparent",
+                                inputWrapper: [
+                                    "shadow-xl",
+                                    "bg-default-200/50",
+                                    "dark:bg-default/60",
+                                    "backdrop-blur-xl",
+                                    "backdrop-saturate-200",
+                                    "hover:bg-default-200/70",
+                                    "dark:hover:bg-default/70",
+                                    "group-data-[focus=true]:bg-default-200/50",
+                                    "dark:group-data-[focus=true]:bg-default/60",
+                                    "!cursor-text",
+                                ],
+                            }}
+                            placeholder="Type to search..."
+                            startContent={
+                                <SearchIcon className="text-black/50 mb-0.5 dark:text-white/90 text-slate-400 pointer-events-none flex-shrink-0" />
+                            }
 
-                            </DropdownMenu>
-                        </Dropdown>
-                        : <DynamicConnectButton>
-                            <div className="px-4 py-2  bg-default rounded-md">
-                                Log-In
-                            </div>
-                        </DynamicConnectButton>
-                }
+                        />
+                    </div>
+                </div>
 
-                <div className="w-1/2 hidden md:block">
+                {children}
 
+                <div className="md:hidden w-full absolute bottom-5 px-5">
                     <Input
                         label="Search"
                         isClearable
@@ -224,43 +271,7 @@ export default function DashboardLayout({
                     />
                 </div>
             </div>
-
-            {children}
-
-            <div className="md:hidden w-full absolute bottom-5 px-5">
-                <Input
-                    label="Search"
-                    isClearable
-                    radius="lg"
-                    classNames={{
-                        label: "text-black/50 dark:text-white/90",
-                        input: [
-                            "bg-transparent",
-                            "text-black/90 dark:text-white/90",
-                            "placeholder:text-default-700/50 dark:placeholder:text-white/60",
-                        ],
-                        innerWrapper: "bg-transparent",
-                        inputWrapper: [
-                            "shadow-xl",
-                            "bg-default-200/50",
-                            "dark:bg-default/60",
-                            "backdrop-blur-xl",
-                            "backdrop-saturate-200",
-                            "hover:bg-default-200/70",
-                            "dark:hover:bg-default/70",
-                            "group-data-[focus=true]:bg-default-200/50",
-                            "dark:group-data-[focus=true]:bg-default/60",
-                            "!cursor-text",
-                        ],
-                    }}
-                    placeholder="Type to search..."
-                    startContent={
-                        <SearchIcon className="text-black/50 mb-0.5 dark:text-white/90 text-slate-400 pointer-events-none flex-shrink-0" />
-                    }
-
-                />
-            </div>
-        </div>
+        </DashboardContext.Provider>
 
     );
 }
