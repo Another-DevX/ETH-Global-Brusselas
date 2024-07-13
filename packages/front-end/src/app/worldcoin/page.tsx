@@ -3,13 +3,13 @@
 import { IDKitWidget, ISuccessResult, useIDKit, VerificationLevel } from '@worldcoin/idkit'
 import { BaseError, decodeAbiParameters, parseAbiParameters } from 'viem'
 import { useAccount, useWriteContract } from 'wagmi'
+import abi from '../../constants/ConnectionManager.abi.json'
 
 
 function WorldCoinPage() {
 
     const { data: hash, isPending, error, writeContractAsync } = useWriteContract()
     const account = useAccount()
-	const { setOpen } = useIDKit()
 
     const verifyProof = async (proof: ISuccessResult) => {
         try {
@@ -28,32 +28,30 @@ function WorldCoinPage() {
                     )[0],
                 ],
             })
-            setDone(true)
+            console.debug('Proof verified')
         } catch (error) { throw new Error((error as BaseError).shortMessage) }
     }
-};
 
-// TODO: Functionality after verifying
-const onSuccess = () => {
-    console.log("Success")
-};
+    const onSuccess = () => {
+        console.log("Success")
+    };
 
-return (
+    return (
 
-    <IDKitWidget
-        app_id="app_staging_4989e6a8b385ae6116fb36aeae08c250"
-        action="verify-public-address"
-        verification_level={VerificationLevel.Orb}
-        handleVerify={verifyProof}
-        onSuccess={onSuccess}>
-        {({ open }) => (
-            <button
-                onClick={open}
-            >
-                Verify with World ID
-            </button>
-        )}
-    </IDKitWidget>
-)
+        <IDKitWidget
+            app_id="app_staging_4989e6a8b385ae6116fb36aeae08c250"
+            action="verify-public-address"
+            verification_level={VerificationLevel.Orb}
+            handleVerify={verifyProof}
+            onSuccess={onSuccess}>
+            {({ open }) => (
+                <button
+                    onClick={open}
+                >
+                    Verify with World ID
+                </button>
+            )}
+        </IDKitWidget>
+    )
 }
 export { WorldCoinPage }
