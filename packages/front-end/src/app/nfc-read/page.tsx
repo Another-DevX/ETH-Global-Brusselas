@@ -26,7 +26,7 @@ const NFCReader: React.FC = () => {
                         const decoder = new TextDecoder();
                         const payload = decoder.decode(event.message.records[0].data);
                         if (!payload) return                      
-                        
+                        alert(payload);
                         setTagContent(payload);
                         // axios.post('/connect', {
                         //     user: address,
