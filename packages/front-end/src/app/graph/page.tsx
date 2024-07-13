@@ -7,25 +7,26 @@ import { ApolloClient, InMemoryCache, gql, HttpLink, useQuery } from '@apollo/cl
 
 
 const transformData = (data: any) => {
-  const nodes : {id: string}[] = [];
+  const nodes = new Set<string>();
   const links: { source: string, target: string }[] = [];
 
   data.connections.forEach((connection: any) => {
-    const source = connection.connector as string;
+    const source = connection.connector;
     const target = connection.recipent;
-    
-    nodes.push({id : source});
-    nodes.push({id : target});
+    nodes.add(source);
+    nodes.add(target);
     links.push({ source, target });
   });
 
+  const nodesArray = Array.from(nodes).map(id => ({ id }));
   
-  debugger
   return {
-    nodes: nodes,
+    nodes: nodesArray,
     links: links
   };
 }
+
+
 
 
 
