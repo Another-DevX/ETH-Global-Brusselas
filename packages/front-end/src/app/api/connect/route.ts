@@ -1,33 +1,38 @@
-import { createPublicClient, createWalletClient, http } from 'viem'
-import abi from '@/constants/ConnectionManager.abi.json'
-import { baseSepolia } from 'viem/chains'
-import { privateKeyToAccount } from 'viem/accounts'
+import { EAS__factory } from '@ethereum-attestation-service/eas-contracts/dist/typechain-types/factories/contracts/EAS__factory';
 
 
-export async function POST(req: Request, res: Response) {
+import { ethers, Wallet } from 'ethers';
+import { JsonRpcProvider } from 'ethers';
+import { SchemaEncoder } from '@ethereum-attestation-service/eas-sdk';
+import { NextResponse } from 'next/server';
 
-    const { user, recipent } = await req.json()
 
-    const publicClient = createPublicClient({
-        chain: baseSepolia,
-        transport: http()
-    })
+export async function POST(req: Request) {
+    const provider = new JsonRpcProvider('https://api.developer.coinbase.com/rpc/v1/base-sepolia/-Vw8g1mMB_R-hj9fmHC4BHh6M6pgi5Og');
+    const wallet = new Wallet(process.env.PRIVATE_KEY!, provider);
+    const eas = EAS__factory.connect('0x4200000000000000000000000000000000000021', wallet);
+    const schemaEncoder = new SchemaEncoder('address user, address recipient');
 
-    const account = privateKeyToAccount(process.env.PRIVATE_KEY as `0x${string}`)
-        
-    const walletClient = createWalletClient({
-        account,
-        chain: baseSepolia,
-        transport: http()
-      })
 
-    const { request } = await publicClient.simulateContract({
-        account,
-        address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as `0x${string}`,
-        abi,
-        functionName: 'connect',
-        args: [user, recipent]
-    })
-    await walletClient.writeContract(request)
+    const { user, recipient } = await req.json()
+    const encodedData = schemaEncoder.encodeData([
+        { name: "user", value: user, type: "address" },
+        { name: "recipient", value: recipient, type: "address" },
+      ]);
+      
 
+    const tx = await eas.attest({
+        schema:'',
+        data: {
+          recipient,
+          data: encodedData,
+          expirationTime: BigInt(0), 
+          value: BigInt(0),
+          refUID: ethers.ZeroHash,
+          revocable: false,
+        },
+      });
+
+      const receipt = await tx.wait()
+      return NextResponse.json({ receipt });
 }

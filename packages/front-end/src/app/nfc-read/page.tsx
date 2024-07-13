@@ -2,16 +2,19 @@
 import { usePrivy } from '@privy-io/react-auth';
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
+import { useAccount } from 'wagmi';
+
 
 const NFCReader: React.FC = () => {
     const [nfcSupported, setNfcSupported] = useState<boolean>(false);
     const [tagContent, setTagContent] = useState<string>('');
     const { ready, login } = usePrivy();
-
+    const { address } = useAccount()
 
 
 
     const handleNfcReading = async () => {
+
         if ("NDEFReader" in window) {
 
             try {
@@ -28,11 +31,10 @@ const NFCReader: React.FC = () => {
                         if (!payload) return
                         alert(payload);
                         setTagContent(payload);
-                        // axios.post('/connect', {
-                        //     user: address,
-                        //     recipent: decodedPayload
-                        // })
-                        // alert(`Contenido del tag NFC: ${decodedPayload}`);
+                        axios.post('/connect', {
+                            user: address,
+                            recipent: payload
+                        })
                     }
                 };
             } catch (error) {
@@ -46,9 +48,6 @@ const NFCReader: React.FC = () => {
     return (
         
         <div>
-            <script src='assets/nfc.js'>
-         
-            </script>
             <span>Please scan:</span>
             <div>
                 <button onClick={handleNfcReading}>Leer NFC</button>

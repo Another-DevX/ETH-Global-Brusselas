@@ -1,0 +1,8 @@
+{
+  "base-sepolia": {
+    "ConnectionManager": {
+      "address": "0xaebbccaf2c89cbc983f61a82d08898cbac823c53",
+      "startBlock": 12557004
+    }
+  }
+}

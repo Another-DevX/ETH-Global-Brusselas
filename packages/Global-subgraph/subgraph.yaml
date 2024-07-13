@@ -1,0 +1,26 @@
+specVersion: 1.0.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: ConnectionManager
+    network: base-sepolia
+    source:
+      address: "0xaebbccaf2c89cbc983f61a82d08898cbac823c53"
+      abi: ConnectionManager
+      startBlock: 12557004
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Connection
+      abis:
+        - name: ConnectionManager
+          file: ./abis/ConnectionManager.json
+      eventHandlers:
+        - event: Connection(indexed address,indexed address)
+          handler: handleConnection
+      file: ./src/connection-manager.ts
