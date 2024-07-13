@@ -9,12 +9,14 @@ import { useRouter } from "next/navigation";
 import { IDKitWidget, ISuccessResult, VerificationLevel } from "@worldcoin/idkit";
 import { BaseError, decodeAbiParameters, parseAbiParameters } from "viem";
 import { SearchIcon } from "@/components/SearchIcon";
+import { DynamicConnectButton, DynamicWidget, useIsLoggedIn } from "@dynamic-labs/sdk-react-core";
 export default function DashboardLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
     const { address } = useAccount()
+    const isLoggedIn = useIsLoggedIn();
 
     const result = useReadContract({
         abi,
@@ -70,57 +72,66 @@ export default function DashboardLayout({
     return (
         <div className="min-h-screen w-full relative">
             <div className=" flex flex-row-reverse justify-between items-center absolute top-5 px-5 w-full">
+                {
+                    isLoggedIn ?
 
-                <Dropdown >
-                    <div
-                        className=" gap-2  flex justify-center items-center"
-                    >
-                        {
-                            result && <img src="https://cryptologos.cc/logos/worldcoin-org-wld-logo.png"
-                                className="w-8 h-8"
-                            />
-                        }
-                        <DropdownTrigger>
-
-                            <Button
-                                variant="bordered"
+                        <Dropdown >
+                            <div
+                                className=" gap-2  flex justify-center items-center"
                             >
-                                anotherdev.eth
-                            </Button>
-                        </DropdownTrigger>
-                    </div>
-                    <DropdownMenu aria-label="Static Actions">
-                        <DropdownItem key="new">Inbox</DropdownItem>
-                        <DropdownItem key="copy">Graph Length</DropdownItem>
-                        <DropdownItem key="copy">Settings</DropdownItem>
+                                {
+                                    result && <img src="https://cryptologos.cc/logos/worldcoin-org-wld-logo.png"
+                                        className="w-8 h-8"
+                                    />
+                                }
+                                <DropdownTrigger>
 
-                        {!result &&
-                            <DropdownItem key="verified">
-                                <IDKitWidget
-                                    app_id="app_staging_4989e6a8b385ae6116fb36aeae08c250"
-                                    action="verify-public-address"
-                                    verification_level={VerificationLevel.Orb}
-                                    onSuccess={verifyProof}
-                                    signal={account.address}
-                                >
-                                    {({ open }) => (
-                                        <Button className="flex gap-2" onClick={open} variant="bordered">
-                                            <img src="https://cryptologos.cc/logos/worldcoin-org-wld-logo.png"
-                                                className="w-4 h-4"
-                                            />
-                                            Verify with worldcoin</Button>
-                                    )}
-                                </IDKitWidget>
-                            </DropdownItem>
-                        }
-                        <DropdownItem key="disconnect">
-                            <Button size="sm" variant="solid" fullWidth color="danger">
-                                Disconect
-                            </Button>
-                        </DropdownItem>
+                                    <Button
+                                        variant="bordered"
+                                    >
+                                        anotherdev.eth
+                                    </Button>
+                                </DropdownTrigger>
+                            </div>
+                            <DropdownMenu aria-label="Static Actions">
+                                <DropdownItem key="new">Inbox</DropdownItem>
+                                <DropdownItem key="copy">Graph Length</DropdownItem>
+                                <DropdownItem key="copy">Settings</DropdownItem>
 
-                    </DropdownMenu>
-                </Dropdown>
+                                {!result &&
+                                    <DropdownItem key="verified">
+                                        <IDKitWidget
+                                            app_id="app_staging_4989e6a8b385ae6116fb36aeae08c250"
+                                            action="verify-public-address"
+                                            verification_level={VerificationLevel.Orb}
+                                            onSuccess={verifyProof}
+                                            signal={account.address}
+                                        >
+                                            {({ open }) => (
+                                                <Button className="flex gap-2" onClick={open} variant="bordered">
+                                                    <img src="https://cryptologos.cc/logos/worldcoin-org-wld-logo.png"
+                                                        className="w-4 h-4"
+                                                    />
+                                                    Verify with worldcoin</Button>
+                                            )}
+                                        </IDKitWidget>
+                                    </DropdownItem>
+                                }
+                                <DropdownItem key="disconnect">
+                                    <Button size="sm" variant="solid" fullWidth color="danger">
+                                        Disconect
+                                    </Button>
+                                </DropdownItem>
+
+                            </DropdownMenu>
+                        </Dropdown>
+                        : <DynamicConnectButton>
+                            <div className="px-4 py-2  bg-default rounded-md">
+                                Log-In
+                            </div>
+                        </DynamicConnectButton>
+                }
+
                 <div className="w-1/2 hidden md:block">
 
                     <Input
