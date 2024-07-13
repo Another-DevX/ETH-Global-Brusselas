@@ -1,35 +1,39 @@
-//@ts-nocheck
 
 'use client'
 import React from "react";
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem, Button, Input } from "@nextui-org/react";
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem, Button, Input, Slider } from "@nextui-org/react";
 import { useAccount, useReadContract, useWriteContract } from 'wagmi'
 import abi from '@/constants/ConnectionManager.abi.json'
 import { useRouter } from "next/navigation";
 import { IDKitWidget, ISuccessResult, VerificationLevel } from "@worldcoin/idkit";
 import { BaseError, decodeAbiParameters, parseAbiParameters } from "viem";
 import { SearchIcon } from "@/components/SearchIcon";
-import { DynamicConnectButton, DynamicWidget, useIsLoggedIn } from "@dynamic-labs/sdk-react-core";
+import { DynamicConnectButton, DynamicWidget, useIsLoggedIn, useWalletItemActions } from "@dynamic-labs/sdk-react-core";
+import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
+import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
+
 export default function DashboardLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
     const { address } = useAccount()
-    const isLoggedIn = useIsLoggedIn();
 
     const result = useReadContract({
         abi,
         address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as `0x${string}`,
         functionName: '_isVerified',
         args: [address!],
-        
+
     })
 
 
     const { writeContractAsync } = useWriteContract()
     const account = useAccount()
+
     const router = useRouter()
+    const { handleLogOut } = useDynamicContext();
+
 
 
     const verifyProof = async (proof: ISuccessResult) => {
@@ -65,7 +69,7 @@ export default function DashboardLayout({
             })
             console.debug('Proof verified')
             result.refetch()
-        } catch (error) { throw new Error((error as BaseError)) }
+        } catch (error) { throw new Error((error as BaseError).shortMessage) }
     }
 
     const onSuccess = () => {
@@ -76,9 +80,12 @@ export default function DashboardLayout({
         <div className="min-h-screen w-full relative">
             <div className=" flex flex-row-reverse justify-between items-center absolute top-5 px-5 w-full">
                 {
-                    isLoggedIn ?
+                    account.isConnected ?
 
-                        <Dropdown >
+                        <Dropdown
+                            shouldCloseOnInteractOutside={(e) => false}
+                            closeOnSelect={false}
+                        >
                             <div
                                 className=" gap-2  flex justify-center items-center"
                             >
@@ -114,10 +121,61 @@ export default function DashboardLayout({
                             </div>
                             <DropdownMenu aria-label="Static Actions">
                                 <DropdownItem key="new">Inbox</DropdownItem>
-                                <DropdownItem key="copy">Graph Length</DropdownItem>
-                                <DropdownItem key="copy">Settings</DropdownItem>
+                                <DropdownItem key="copy">
+                                <Popover
+                                        offset={30}
+                                        placement="right">
+                                        <PopoverTrigger>
+                                            <p>Settings</p>
+                                        </PopoverTrigger>
+                                        <PopoverContent>
+                                            <div className="px-1 py-2">
+                                                <div className="text-small font-bold">Select the max user tier able to send DMs to you.</div>
+                                                <Slider
+                                                    size="md"
+                                                    step={1}
+                                                    color="foreground"
+                                                    label="Length"
+                                                    showSteps={true}
+                                                    maxValue={10}
+                                                    minValue={1}
+                                                    defaultValue={3}
+                                                    className="max-w-md"
+                                                />
+                                            </div>
+                                        </PopoverContent>
+                                    </Popover>
+                                </DropdownItem>
+                                <DropdownItem key="copy">
+                                    <Popover
+                                        offset={30}
+                                        placement="right">
+                                        <PopoverTrigger>
+                                            <p>Graph Length</p>
+                                        </PopoverTrigger>
+                                        <PopoverContent>
+                                            <div className="px-1 py-2">
+                                                <div className="text-small font-bold">Select the max graph tier visible</div>
+                                                <Slider
+                                                    size="md"
+                                                    step={1}
+                                                    color="foreground"
+                                                    label="Length"
+                                                    showSteps={true}
+                                                    maxValue={10}
+                                                    minValue={1}
+                                                    defaultValue={3}
+                                                    className="max-w-md"
+                                                />
+                                            </div>
+                                        </PopoverContent>
+                                    </Popover>
+                                </DropdownItem>
                                 <DropdownItem key="disconnect">
-                                    <Button size="sm" variant="solid" fullWidth color="danger">
+                                    <Button size="sm" variant="solid" onClick={async () => {
+                                        await handleLogOut()
+                                        router.replace('/')
+                                    }} fullWidth color="danger">
                                         Disconect
                                     </Button>
                                 </DropdownItem>
