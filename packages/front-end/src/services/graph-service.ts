@@ -27,29 +27,29 @@ function mergeArraysUnique(array1, array2) {
     return uniqueArray;
 }
 
-export const transformData = (data: any, currentNode: any, depth: number = 1) => {
+export const transformData = (data: any, currentNode: string =  data.connections[1].connector, depth: number = 2) => {
     const nodes = new Set<string>();
     const links: { source: string, target: string }[] = [];
 
-
-
-    const filteredData = subGraph(data.connections, currentNode ?? data.connections[0].connector, depth);
+    const filteredData = subGraph(data.connections, currentNode, depth);
 
 
     filteredData.forEach((connection: any) => {
         const source = connection.connector;
         const target = connection.recipent;
+
         nodes.add(source);
         nodes.add(target);
         links.push({ source, target });
     });
-
-    const nodesArray = Array.from(nodes).map(id => ({ id }));
+    
+    const nodesArray = Array.from(nodes).map(id => ({ id, color: (id == currentNode ? "#FF0000" : "#A6CEE3") }));
 
     let result = {
         nodes: nodesArray,
         links: links
     };
-
+    console.log(currentNode);
+    console.log(result);
     return result;
 }

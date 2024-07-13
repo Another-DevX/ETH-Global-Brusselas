@@ -50,7 +50,7 @@ const Page = () => {
       ref={fgRef}
       onNodeClick={handleClick}
 
-      nodeAutoColorBy='group'
+      
       graphData={transformData(data)}
     />
   );
