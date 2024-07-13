@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 
 const NFCWriter: React.FC = () => {
     const [nfcSupported, setNfcSupported] = useState<boolean>(false);
-    const [messageToWrite, setMessageToWrite] = useState<string>('');
+    const [messageToWrite, setMessageToWrite] = useState<string>('Hola mundo');
 
     const initializeNFCWriter = async () => {
         try {
@@ -22,10 +22,7 @@ const NFCWriter: React.FC = () => {
     const handleWriteNFC = async () => {
         try {
             const ndef: any = (window as any).NDEFReader();
-            await ndef.scan();
-
-            const ndefWriter: any = (window as any).NDEFWriter();
-            await ndefWriter.write(messageToWrite);
+            await ndef.write(messageToWrite);
 
             console.log('Mensaje escrito en el tag NFC:', messageToWrite);
             alert('Mensaje escrito correctamente en el tag NFC.');
