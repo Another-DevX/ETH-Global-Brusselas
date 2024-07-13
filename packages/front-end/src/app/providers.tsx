@@ -11,6 +11,7 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 
 const queryClient = new QueryClient()
 
+
 export const config = createConfig({
     chains: [baseSepolia],
     multiInjectedProviderDiscovery: false,
