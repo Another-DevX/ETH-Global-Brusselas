@@ -5,30 +5,31 @@ import ForceGraph2D from 'react-force-graph-2d';
 import { ApolloClient, InMemoryCache, gql, HttpLink, useQuery } from '@apollo/client';
 
 
-/* 
-function transformData(data: any) {
-  const nodes = new Set<string>();
-  const edges: { source: string, target: string }[] = [];
+
+const transformData = (data: any) => {
+  const nodes : {id: string}[] = [];
+  const links: { source: string, target: string }[] = [];
 
   data.connections.forEach((connection: any) => {
-    const source = connection.connector;
+    const source = connection.connector as string;
     const target = connection.recipent;
-    nodes.add(source);
-    nodes.add(target);
-    edges.push({ source, target });
+    
+    nodes.push({id : source});
+    nodes.push({id : target});
+    links.push({ source, target });
   });
 
-  const nodesArray = Array.from(nodes).map(id => ({ id }));
-
+  
+  debugger
   return {
-    nodes: nodesArray,
-    edges: edges
+    nodes: nodes,
+    links: links
   };
 }
 
 
 
-*/
+
 
 const genRandomTree = (N = 20, reverse = false) => {
   const nodes = Array.from({ length: N }, (_, i) => ({ id: i }));
@@ -104,7 +105,7 @@ const Page = () => {
       onNodeClick={handleClick}
 
       nodeAutoColorBy='group'
-      graphData={genRandomTree()}
+      graphData={transformData(graphData)}
     />
   );
 };
