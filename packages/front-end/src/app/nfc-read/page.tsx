@@ -1,10 +1,13 @@
 "use client"
+import axios from 'axios';
 import React, { useState, useEffect } from 'react';
+import { useAccount } from 'wagmi';
 
 const NFCReader: React.FC = () => {
     const [nfcSupported, setNfcSupported] = useState<boolean>(false);
     const [tagContent, setTagContent] = useState<string>('');
 
+    const { address } = useAccount()
     useEffect(() => {
         if ('NDEFReader' in window) {
             setNfcSupported(true);
@@ -22,10 +25,14 @@ const NFCReader: React.FC = () => {
                 const message = event.message;
                 if (message.records.length > 0) {
                     const payload = message.records[0].data;
-                    if(!payload) return
+                    if (!payload) return
                     const textDecoder = new TextDecoder();
                     const decodedPayload = textDecoder.decode(payload as ArrayBuffer);
                     setTagContent(decodedPayload);
+                    axios.post('/connect', {
+                        user: address,
+                        recipent: decodedPayload
+                    })
                 }
             };
         } catch (error) {
