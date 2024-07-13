@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 
 const NFCWriter: React.FC = () => {
-    const [nfcSupported, setNfcSupported] = useState<boolean>(false);
     const [messageToWrite, setMessageToWrite] = useState<string>('Hola mundo');
     const { address } = useAccount()
 
