@@ -1,5 +1,4 @@
 "use client"
-import { usePrivy } from '@privy-io/react-auth';
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { useAccount } from 'wagmi';
@@ -8,7 +7,6 @@ import { useAccount } from 'wagmi';
 const NFCReader: React.FC = () => {
     const [nfcSupported, setNfcSupported] = useState<boolean>(false);
     const [tagContent, setTagContent] = useState<string>('');
-    const { ready, login } = usePrivy();
     const { address } = useAccount()
 
 

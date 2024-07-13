@@ -1,16 +1,18 @@
 'use client'
 import React from 'react'
-import { http } from 'wagmi'
+import { createConfig, http, WagmiProvider } from 'wagmi'
 import { baseSepolia } from 'wagmi/chains'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { PrivyProvider } from '@privy-io/react-auth';
-import { createConfig, WagmiProvider } from '@privy-io/wagmi';
+import { NextUIProvider } from '@nextui-org/react'
+import { DynamicContextProvider } from '@dynamic-labs/sdk-react-core'
+import { EthereumWalletConnectors } from '@dynamic-labs/ethereum'
 
 
 const queryClient = new QueryClient()
 
 export const config = createConfig({
     chains: [baseSepolia],
+    multiInjectedProviderDiscovery: false,
     transports: {
         [baseSepolia.id]: http(),
     },
@@ -21,27 +23,22 @@ function Providers({ children }: { children: React.ReactNode }) {
 
 
     return (
-        <PrivyProvider
-            appId="clyji9s9s0105lh1oyyrn1ao5"
-            config={{
-                appearance: {
-                    theme: 'light',
-                    accentColor: '#676FFF',
-                    logo: 'https://your-logo-url',
-                },
-                embeddedWallets: {
-                    createOnLogin: 'users-without-wallets',
-                },
-            }}
-        >
-
+        <DynamicContextProvider
+        settings={{
+          environmentId: "1950d097-0c06-4589-af21-f02e3f165c10",
+          walletConnectors: [EthereumWalletConnectors],
+        }}
+      >
+      
             <QueryClientProvider client={queryClient}>
                 <WagmiProvider config={config}>
-
-                    {children}
+                    <NextUIProvider>
+                        {children}
+                    </NextUIProvider>
                 </WagmiProvider>
             </QueryClientProvider>
-        </PrivyProvider>
+      </DynamicContextProvider>
+
     )
 }
 
