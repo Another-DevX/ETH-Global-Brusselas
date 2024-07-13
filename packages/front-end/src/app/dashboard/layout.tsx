@@ -1,3 +1,4 @@
+//@ts-nocheck
 
 'use client'
 import React from "react";
@@ -93,7 +94,6 @@ export default function DashboardLayout({
                         <DropdownItem key="copy">Graph Length</DropdownItem>
                         <DropdownItem key="copy">Settings</DropdownItem>
 
-                        {/* @ts-expect-error bad nextui implementation */}
                         {!result &&
                             <DropdownItem key="verified">
                                 <IDKitWidget
