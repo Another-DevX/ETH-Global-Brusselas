@@ -6,9 +6,9 @@ import {IEAS, Attestation} from "eas-contracts/IEAS.sol";
 import {ConnectionManager} from "./ConnectionsManager.sol";
 
 contract Resolver is SchemaResolver {
-    address private _connectionManager;
-    constructor(IEAS eas, ConnectionManager manager) Ownable(msg.sender) SchemaResolver(eas) {
-        _connectionManager = address(manager);
+    ConnectionManager private _connectionManager;
+    constructor(IEAS eas, ConnectionManager manager)  SchemaResolver(eas) {
+        _connectionManager = manager;
     }
 
     function onAttest(
@@ -16,7 +16,7 @@ contract Resolver is SchemaResolver {
         uint256 /*value*/
     ) internal override returns (bool) {
         (address connector, address recipient) = abi.decode(attestation.data, (address, address));
-        _connectionManager.connect(connector, recipent);
+        _connectionManager.connect(connector, recipient);
         return true;
     }
 

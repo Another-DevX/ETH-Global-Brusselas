@@ -16,7 +16,7 @@ contract Deploy is Script {
             "verify-public-address"
         );
         Resolver resolver = new Resolver(
-        IEAS(0x4200000000000000000000000000000000000021),address(cm)
+        IEAS(0x4200000000000000000000000000000000000021),cm
         );
         console.log("ConnectionManager deployed at: ", address(cm));
     }
