@@ -8,13 +8,7 @@ const NFCReader: React.FC = () => {
     const [tagContent, setTagContent] = useState<string>('');
 
     const { address } = useAccount()
-    useEffect(() => {
-        if ('NDEFReader' in window) {
-            setNfcSupported(true);
-        } else {
-            console.log('Web NFC no está soportado en este navegador.');
-        }
-    }, []);
+
 
     const handleNfcReading = async () => {
         try {
@@ -42,14 +36,11 @@ const NFCReader: React.FC = () => {
 
     return (
         <div>
-            {nfcSupported ? (
-                <div>
-                    <button onClick={handleNfcReading}>Leer NFC</button>
-                    {tagContent && <p>Contenido del tag NFC: {tagContent}</p>}
-                </div>
-            ) : (
-                <p>Web NFC no está soportado en este navegador.</p>
-            )}
+            <div>
+                <button onClick={handleNfcReading}>Leer NFC</button>
+                {tagContent && <p>Contenido del tag NFC: {tagContent}</p>}
+            </div>
+
         </div>
     );
 };
