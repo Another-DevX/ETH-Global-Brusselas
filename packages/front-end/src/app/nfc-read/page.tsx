@@ -14,7 +14,7 @@ const NFCReader: React.FC = () => {
     const handleNfcReading = async () => {
         
         if ("NDEFReader" in window) {
-            alert('hola');
+            
             try {
                 const ndef: any = (window as any).NDEFReader;
                 alert('NFC Reader is ready');
@@ -38,13 +38,15 @@ const NFCReader: React.FC = () => {
             } catch (error) {
                 console.error('Error al leer NFC:', error);
             }
+        }else{
+            alert('hola');
         }
 
     };
 
     return (
         <div>
-         
+         <span>Please scan:</span>
             <div>
                 <button onClick={handleNfcReading}>Leer NFC</button>
                 {tagContent && <p>Contenido del tag NFC: {tagContent}</p>}
