@@ -8,7 +8,7 @@ export const subGraph = (grafo: any, currentNode: any, distancia: number) => {
         adjacencia.get(link.target).push(link.source);
     });
 
-    // Realizar BFS para encontrar nodos a la distancia especificada
+    
     const cola = [[nodoInicial, 0]];
     const visitados = new Set();
     const nodosEnDistancia = new Set();
@@ -57,7 +57,7 @@ export const transformData = (data: any) => {
         links: links
     };
     console.log(result);
-    //result = subGraph(result, result.nodes[0], 1);
+    result = subGraph(result, result.nodes[0], 1);
 
     return result;
 }
