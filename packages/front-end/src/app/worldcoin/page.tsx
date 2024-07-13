@@ -1,36 +1,59 @@
 // (If using Next.js - IDKitWidget must be run on client)
 "use client"
-import { IDKitWidget, VerificationLevel } from '@worldcoin/idkit'
+import { IDKitWidget, ISuccessResult, useIDKit, VerificationLevel } from '@worldcoin/idkit'
+import { BaseError, decodeAbiParameters, parseAbiParameters } from 'viem'
+import { useAccount, useWriteContract } from 'wagmi'
 
 
 function WorldCoinPage() {
 
-    // TODO: Calls your implemented server route
-    const verifyProof = async (proof) => {
-        throw new Error("TODO: verify proof server route")
-    };
+    const { data: hash, isPending, error, writeContractAsync } = useWriteContract()
+    const account = useAccount()
+	const { setOpen } = useIDKit()
 
-    // TODO: Functionality after verifying
-    const onSuccess = () => {
-        console.log("Success")
-    };
+    const verifyProof = async (proof: ISuccessResult) => {
+        try {
+            await writeContractAsync({
+                address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as `0x${string}`,
+                account: account.address!,
+                abi,
+                functionName: 'verifyAndExecute',
+                args: [
+                    account.address!,
+                    BigInt(proof!.merkle_root),
+                    BigInt(proof!.nullifier_hash),
+                    decodeAbiParameters(
+                        parseAbiParameters('uint256[8]'),
+                        proof!.proof as `0x${string}`
+                    )[0],
+                ],
+            })
+            setDone(true)
+        } catch (error) { throw new Error((error as BaseError).shortMessage) }
+    }
+};
 
-    return (
+// TODO: Functionality after verifying
+const onSuccess = () => {
+    console.log("Success")
+};
 
-        <IDKitWidget
-            app_id="app_staging_4989e6a8b385ae6116fb36aeae08c250"
-            action="verify-public-address"
-            verification_level={VerificationLevel.Orb}
-            handleVerify={verifyProof}
-            onSuccess={onSuccess}>
-            {({ open }) => (
-                <button
-                    onClick={open}
-                >
-                    Verify with World ID
-                </button>
-            )}
-        </IDKitWidget>
-    )
+return (
+
+    <IDKitWidget
+        app_id="app_staging_4989e6a8b385ae6116fb36aeae08c250"
+        action="verify-public-address"
+        verification_level={VerificationLevel.Orb}
+        handleVerify={verifyProof}
+        onSuccess={onSuccess}>
+        {({ open }) => (
+            <button
+                onClick={open}
+            >
+                Verify with World ID
+            </button>
+        )}
+    </IDKitWidget>
+)
 }
 export { WorldCoinPage }

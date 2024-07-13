@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 import {ByteHasher} from "./helpers/ByteHasher.sol";
+import {IWorldID} from "./interfaces/IWorldID.sol";
 
 contract ConnectionManager {
 
@@ -26,7 +27,7 @@ contract ConnectionManager {
 
     /// @param _worldId The address of the WorldIDRouter that will verify the proofs
     /// @param _appId The World ID App ID (from Developer Portal)
-    /// @param _actionId The World ID Action (from Developer Portal)
+    /// @param _action The World ID Action (from Developer Portal)
     constructor(
         IWorldID _worldId,
         string memory _appId,
