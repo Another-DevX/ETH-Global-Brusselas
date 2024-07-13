@@ -6,7 +6,7 @@ import { useAccount, useWriteContract } from 'wagmi'
 import abi from '../../constants/ConnectionManager.abi.json'
 
 
-function WorldCoinPage() {
+export default function WorldCoinPage() {
 
     const { data: hash, isPending, error, writeContractAsync } = useWriteContract()
     const account = useAccount()
@@ -54,4 +54,3 @@ function WorldCoinPage() {
         </IDKitWidget>
     )
 }
-export { WorldCoinPage }

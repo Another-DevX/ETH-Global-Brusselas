@@ -1,3 +1,4 @@
+'use client'
 import React from 'react'
 import { http, createConfig, WagmiProvider } from 'wagmi'
 import { mainnet, sepolia } from 'wagmi/chains'
