@@ -13,33 +13,32 @@ const NFCReader: React.FC = () => {
 
 
     const handleNfcReading = async () => {
-    if ("NDEFReader" in window) {
+        if ("NDEFReader" in window) {
 
-        try {
-            const ndef: any = (window as any).NDEFReader;
-            alert('NFC Reader is ready');
-            await ndef.scan();
+            try {
+                const ndef: any = (window as any).NDEFReader;
+                alert('NFC Reader is ready');
+                await ndef.scan();
 
-            ndef.onreading = ({message, serialNumber}) => {
-                alert(serialNumber)
-                alert(message);
-                if (message.records.length > 0) {
-                    const payload = message.records[0].data;
-                    if (!payload) return
-                    const textDecoder = new TextDecoder();
-                    const decodedPayload = textDecoder.decode(payload as ArrayBuffer);
-                    setTagContent(decodedPayload);
-                    // axios.post('/connect', {
-                    //     user: address,
-                    //     recipent: decodedPayload
-                    // })
-                    // alert(`Contenido del tag NFC: ${decodedPayload}`);
-                }
-            };
-        } catch (error) {
-            console.error('Error al leer NFC:', error);
+                ndef.onreading = event => {                    
+
+                    if (event.message.records.length > 0) {
+                        const decoder = new TextDecoder();
+                        const payload = decoder.decode(event.message.records[0].data);
+                        if (!payload) return                      
+                        
+                        setTagContent(payload);
+                        // axios.post('/connect', {
+                        //     user: address,
+                        //     recipent: decodedPayload
+                        // })
+                        // alert(`Contenido del tag NFC: ${decodedPayload}`);
+                    }
+                };
+            } catch (error) {
+                console.error('Error al leer NFC:', error);
+            }
         }
-    }
 
     };
 
