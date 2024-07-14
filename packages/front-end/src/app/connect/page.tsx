@@ -52,7 +52,7 @@ function Page() {
     console.debug(result)
     return (
         <div className='min-h-screen flex justify-center items-center flex-col gap-4'>
-            <h2 className='text-lg font-semibold text-center'>Do you want to connect with {result.data ? result.data : connector}?</h2>
+            <h2 className='text-lg font-semibold text-center'>Do you want to connect with {result.data ? result.data : `${connector.slice(0,4)}...${connector.slice(-4)}`}?</h2>
 
             {
                 isLoggedIn ? <div className='flex gap-2'>
