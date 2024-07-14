@@ -14,11 +14,10 @@ const queryClient = new QueryClient()
 
 
 export const config = createConfig({
-    chains: [baseSepolia, mainnet],
+    chains: [baseSepolia],
     multiInjectedProviderDiscovery: false,
     transports: {
         [baseSepolia.id]: http(),
-        [mainnet.id]: http()
     },
 })
 
