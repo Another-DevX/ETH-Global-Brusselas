@@ -78,6 +78,7 @@ export const transformData = (data: any, depth: number = 4, currentNode: string)
     const nodesArray = Array.from(nodes).map(id => ({
         id,
         name : abreviarTexto(id),
+        label: id,
         color: (id == currentNode ? "#FF0000" : "#A6CEE3"),
         val: 15 
     }));

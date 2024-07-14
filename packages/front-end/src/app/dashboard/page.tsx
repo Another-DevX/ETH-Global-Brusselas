@@ -42,12 +42,12 @@ const Page = () => {
   }
 `;
 
-  const { error, data, loading } = useQuery(GET_CONNECTIONS);
+  const { error, data, loading } = useQuery(GET_CONNECTIONS, { pollInterval: 5000 });
 
 
   const fgRef = useRef();
   const handleClick = useCallback(node => {
-    
+
 
     node.color = "#FF0000";
     // Aim at node from outside it       
@@ -58,10 +58,12 @@ const Page = () => {
       500  // ms transition duration
     );
     setTimeout(() => {
-      fgRef.current.zoomToFit(500, 100);
+      setCurrentNode(node.id);
       setTimeout(() => {
-        setCurrentNode(node.id);
-      }, 500);
+        fgRef.current.zoomToFit(500, 100);
+      },500);
+      
+
     }, 500);
 
 
@@ -75,7 +77,7 @@ const Page = () => {
     const graphData = transformData(data, depth, currentNode)
     console.debug(graphData)
     setGraphData(graphData);
-  }, [loading, currentNode, depth])
+  }, [loading, data, currentNode, depth])
 
 
 
@@ -84,15 +86,17 @@ const Page = () => {
 
 
   return (
-    <ForceGraph2D
-      ref={fgRef}
-      onNodeClick={handleClick}
-      nodeCanvasObject={(node, ctx) => nodePaint(node, ctx)}
-      // nodePointerAreaPaint={nodePaint}
-
-      nodeLabel='name'
-      graphData={graphData}
-    />
+    <div className='canvas-style'>
+      <ForceGraph2D
+        ref={fgRef}
+        height={window.screen.height - 230}
+        onNodeClick={handleClick}
+        nodeCanvasObject={(node, ctx) => nodePaint(node, ctx)}
+        // nodePointerAreaPaint={nodePaint}
+        nodeLabel='label'
+        graphData={graphData}
+      />
+    </div>
   );
 };
 
