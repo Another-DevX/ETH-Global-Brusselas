@@ -37,18 +37,7 @@ function getRandomHexColor() {
     return `#${randomColor.padStart(6, '0')}`;
 }
 
-const linkColor = (quality: string) => {
 
-    return getRandomHexColor();
-    switch (quality) {
-        case "a":
-            return "#FF0000";
-        case "b":
-            return "#00FF00";
-        default:
-            return "#000000";
-    }
-}
 
 function abreviarTexto(texto) {
     if (texto.length <= 10) {
@@ -58,6 +47,12 @@ function abreviarTexto(texto) {
     const ultimosCuatro = texto.slice(-4);
     return `${primerosSeis}...${ultimosCuatro}`;
 }
+
+const mapping = {
+    "0x5E15DBf75d3819Dd9DA31Fc159Ce5bc5f3751AB0": { "ens": "vitalik.eth", "quality": "worldid" },
+    "0xA081e1dA16133bB4Ebc7Aab1A9B0588A48D15138" : { "ens": "jampol.eth", "quality": "worldid" }
+};
+
 
 export const transformData = (data: any, depth: number = 4, currentNode: string) => {
     const nodes = new Set<string>();
@@ -72,15 +67,20 @@ export const transformData = (data: any, depth: number = 4, currentNode: string)
 
         nodes.add(source);
         nodes.add(target);
-        links.push({ source, target, color: linkColor('') });
+        links.push({
+            source,
+            target,
+            color: getRandomHexColor(),
+            linkWidth: 2
+        });
     });
 
     const nodesArray = Array.from(nodes).map(id => ({
         id,
-        name : abreviarTexto(id),
+        name: abreviarTexto(id),
         label: id,
         color: (id == currentNode ? "#FF0000" : "#A6CEE3"),
-        val: 15 
+        val: 15
     }));
     console.log('Pintado', currentNode);
     let result = {
