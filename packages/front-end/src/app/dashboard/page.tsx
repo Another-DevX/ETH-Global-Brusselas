@@ -1,16 +1,18 @@
 'use client';
 
 import React, { useCallback, useRef, useState, useEffect } from 'react';
-import ForceGraph2D from 'react-force-graph-2d';
 import { gql, HttpLink, useQuery } from '@apollo/client';
 import { transformData } from '@/services/graph-service';
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem, Button, Input } from "@nextui-org/react";
 
 import { useDashboardContext } from './config'
+import dynamic from 'next/dynamic';
+
+// Cargar ForceGraph2D dinámicamente para evitar el prerenderizado en el servidor
+const ForceGraph2D = dynamic(() => import('react-force-graph-2d'), { ssr: false });
 
 
-
-function nodePaint({ id, x, y, color, name }, ctx) {
+function nodePaint({ id, x, y, color, name }: { id: number, x: number, y: number, color: string, name: string }, ctx: any) {
   ctx.fillStyle = color;
   ctx.beginPath();
   ctx.arc(x, y, 10, 0, 2 * Math.PI, false);
@@ -45,12 +47,13 @@ const Page = () => {
   const { error, data, loading } = useQuery(GET_CONNECTIONS);
 
 
-  const fgRef = useRef();
-  const handleClick = useCallback(node => {
-    
+  const fgRef = useRef< any | null>(null);
+  const handleClick = useCallback((node: any) => {
+
 
     node.color = "#FF0000";
-    // Aim at node from outside it       
+    // Aim at node from outside it      
+    if(!fgRef.current) return;
 
     fgRef.current.centerAt(
       node.x,
@@ -87,7 +90,7 @@ const Page = () => {
     <ForceGraph2D
       ref={fgRef}
       onNodeClick={handleClick}
-      nodeCanvasObject={(node, ctx) => nodePaint(node, ctx)}
+      nodeCanvasObject={(node, ctx) => nodePaint(node as any, ctx)}
       // nodePointerAreaPaint={nodePaint}
 
       nodeLabel='name'

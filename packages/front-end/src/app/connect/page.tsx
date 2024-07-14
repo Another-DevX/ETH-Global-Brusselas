@@ -101,7 +101,7 @@ function Page() {
                         <>
                             <ModalHeader className="flex flex-col gap-1">Connection succesful</ModalHeader>
                             <ModalBody>
-                                <p>Congratulations, you've successfully connected with each other!</p>
+                                <p>Congratulations, you&apos;ve successfully connected with each other!</p>
                             </ModalBody>
                             <ModalFooter>
                                 <Button color="danger" variant="light" onPress={onClose}>
