@@ -8,6 +8,7 @@ import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem,
 
 import { useDashboardContext } from './config'
 import { useIsClient } from '@/hooks/useIsClient';
+import { useAccount } from 'wagmi';
 
 
 
@@ -29,7 +30,8 @@ function nodePaint({ id, x, y, color, name }: { id: number, x: number, y: number
 
 const Graph = () => {
   const depth = useDashboardContext()
-  const [currentNode, setCurrentNode] = useState(null);
+  const { address } = useAccount();
+  const [currentNode, setCurrentNode] = useState(address);
 
 
   const GET_CONNECTIONS = gql`
