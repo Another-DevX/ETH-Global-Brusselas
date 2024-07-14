@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract IdentityPoints is ERC20, Ownable {
     constructor() ERC20("IdentityPoints", "PPL") Ownable(msg.sender) {}
 
-    function mint(address to, uint256 amount) public onlyOwner {
+    function mint(address to, uint256 amount) public  {
         _mint(to, amount);
     }
     function transfer(

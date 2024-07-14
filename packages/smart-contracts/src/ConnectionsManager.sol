@@ -78,7 +78,7 @@ contract ConnectionManager {
     function connect(address connector, address recipient) public {
         require(!connections[connector][recipient] && !connections[recipient][connector], "The users are connected yet");
         connections[connector][recipient] = true;
-        if(!_isVerified[connector] && !_isVerified[recipient]) {
+        if(_isVerified[connector] && _isVerified[recipient]) {
             boost(connector, recipient);
         }
         emit Connection(connector, recipient);
