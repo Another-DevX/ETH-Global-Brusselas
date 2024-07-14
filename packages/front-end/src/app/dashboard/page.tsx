@@ -6,27 +6,13 @@ import { gql, HttpLink, useQuery } from '@apollo/client';
 import { transformData } from '@/services/graph-service';
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem, Button, Input } from "@nextui-org/react";
 
-
+import { useDashboardContext } from './layout'
 
 
 
 const Page = () => {
-
-  const [depth, setDepth] = useState(0);
-
-  function handleDepth() {
-    setDepth(depth + 1);
-  }
-
-  const fgRef = useRef();
-  const handleClick = useCallback(node => {
-
-    fgRef.current.zoomToFit(
-      500, 10);
-
-
-  }, [fgRef]);
-
+  const depth = useDashboardContext()
+  const [currentNode, setCurrentNode] = useState(null);
 
 
   const GET_CONNECTIONS = gql`
@@ -40,24 +26,72 @@ const Page = () => {
   }
 `;
 
-
   const { error, data, loading } = useQuery(GET_CONNECTIONS);
 
 
+  const fgRef = useRef();
+  const handleClick = useCallback(node => {
+    console.log(node);
+    setCurrentNode(node.id);
+
+    // Aim at node from outside it       
+
+    fgRef.current.centerAt(
+      node.x,
+      node.y, // new position
+      3000  // ms transition duration
+    );
+    // fgRef.current.zoomToFit(
+    //   500, 200);
 
 
-  if (loading) return <p>Loading...</p>
+  }, [fgRef]);
+
+  const [graphData, setGraphData] = useState<null | any>(null);
+
+  useEffect(() => {
+    if (loading ) return;
+    const graphData = transformData(data, depth, currentNode)
+    console.debug(graphData)
+    setGraphData(graphData);
+  }, [loading, currentNode, depth])
+
+
+
+  if (loading || !graphData) return <p>Loading...</p>
+
   return (
-    <div>
-      <button onClick={handleDepth}>
-        Increase Depth
-      </button>
-      <ForceGraph2D
-        ref={fgRef}
-        onNodeClick={handleClick}
-        graphData={transformData(data, depth)}
-      />
-    </div>
+    <ForceGraph2D
+      ref={fgRef}
+      onNodeClick={handleClick}
+      /* nodeCanvasObject={(node, ctx, globalScale) => {
+         const label = node.name;
+         const fontSize = 12 / globalScale;
+         ctx.font = `${fontSize}px Sans-Serif`;
+         const textWidth = ctx.measureText(label).width;
+         const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.2); // some padding
+ 
+         ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+         ctx.fillRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2, ...bckgDimensions);
+ 
+         ctx.textAlign = 'center';
+         ctx.textBaseline = 'middle';
+         ctx.fillStyle = node.color;
+         ctx.fillText(label, node.x, node.y);
+ 
+         node.__bckgDimensions = bckgDimensions; // to re-use in nodePointerAreaPaint
+       }}
+       nodePointerAreaPaint={(node, color, ctx) => {
+         ctx.fillStyle = color;
+         const bckgDimensions = node.__bckgDimensions;
+         bckgDimensions && ctx.fillRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2, ...bckgDimensions);
+         ctx.beginPath();
+         ctx.arc(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[0] / 2, 5, 0, 2 * Math.PI, false);
+         ctx.fill();
+       }}*/
+      nodeLabel='name'
+      graphData={graphData}
+    />
   );
 };
 

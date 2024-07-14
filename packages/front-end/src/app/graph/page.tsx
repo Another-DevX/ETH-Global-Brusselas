@@ -22,7 +22,7 @@ const Page = () => {
   const handleClick = useCallback(node => {
 
     fgRef.current.zoomToFit(
-      500, 10);
+      500, 50);
 
 
   }, [fgRef]);

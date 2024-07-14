@@ -50,10 +50,19 @@ const linkColor = (quality: string) => {
     }
 }
 
-export const transformData = (data: any, depth: number = 4, currentNode: string = data.connections[5].connector) => {
+function abreviarTexto(texto) {
+    if (texto.length <= 10) {
+        return texto;
+    }
+    const primerosSeis = texto.slice(0, 6);
+    const ultimosCuatro = texto.slice(-4);
+    return `${primerosSeis}...${ultimosCuatro}`;
+}
+
+export const transformData = (data: any, depth: number = 4, currentNode: string) => {
     const nodes = new Set<string>();
     const links: { source: string, target: string }[] = [];
-
+    currentNode = currentNode ?? data.connections[0].connector;
     const filteredData = subGraph(data.connections, currentNode, depth);
 
 
@@ -68,10 +77,11 @@ export const transformData = (data: any, depth: number = 4, currentNode: string 
 
     const nodesArray = Array.from(nodes).map(id => ({
         id,
+        name : abreviarTexto(id),
         color: (id == currentNode ? "#FF0000" : "#A6CEE3"),
-        label: 'S'
+        val: 15 
     }));
-
+    console.log('Pintado', currentNode);
     let result = {
         nodes: nodesArray,
         links: links

@@ -15,6 +15,8 @@ export async function POST(req: Request) {
 
 
     const { user, recipient } = await req.json()
+    try{
+
     const encodedData = schemaEncoder.encodeData([
         { name: "user", value: user, type: "address" },
         { name: "recipient", value: recipient, type: "address" },
@@ -34,5 +36,11 @@ export async function POST(req: Request) {
       });
 
       const receipt = await tx.wait()
+      console.debug(receipt)
       return NextResponse.json({ receipt });
+    }
+    catch(e){
+      console.error(e)
+      return NextResponse.error(e)
+    }
 }

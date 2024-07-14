@@ -7,6 +7,7 @@ import { NextUIProvider } from '@nextui-org/react'
 import { DynamicContextProvider } from '@dynamic-labs/sdk-react-core'
 import { EthereumWalletConnectors } from '@dynamic-labs/ethereum'
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
+import { DynamicWagmiConnector } from '@dynamic-labs/wagmi-connector';
 
 
 const queryClient = new QueryClient()
@@ -35,18 +36,19 @@ function Providers({ children }: { children: React.ReactNode }) {
                 walletConnectors: [EthereumWalletConnectors],
             }}
         >
-            <ApolloProvider client={client}>
+            <WagmiProvider config={config}>
+                <ApolloProvider client={client}>
+                    <QueryClientProvider client={queryClient}>
+                        <DynamicWagmiConnector>
 
+                            <NextUIProvider>
+                                {children}
+                            </NextUIProvider>
+                        </DynamicWagmiConnector>
 
-                <QueryClientProvider client={queryClient}>
-                    <WagmiProvider config={config}>
-                        <NextUIProvider>
-                            {children}
-                        </NextUIProvider>
-                    </WagmiProvider>
-                </QueryClientProvider>
-            </ApolloProvider>
-
+                    </QueryClientProvider>
+                </ApolloProvider>
+            </WagmiProvider>
         </DynamicContextProvider>
 
     )

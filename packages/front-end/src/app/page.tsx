@@ -1,5 +1,5 @@
 'use client'
-import { DynamicWidget } from "@dynamic-labs/sdk-react-core";
+import { DynamicWidget, useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { Button, Card, CardBody, CardHeader } from "@nextui-org/react";
 import Image from "next/image";
 import { IDKitWidget, ISuccessResult, useIDKit, VerificationLevel } from '@worldcoin/idkit'
@@ -13,33 +13,21 @@ import { useRouter } from "next/navigation";
 export default function Home() {
 
   const { writeContractAsync } = useWriteContract()
-  const account = useAccount()
+  const {isConnected, address} = useAccount()
   const router = useRouter()
 
 
+
+  
   const verifyProof = async (proof: ISuccessResult) => {
     try {
-      console.debug(
-        {
-          args: [
-            account.address!,
-            BigInt(proof!.merkle_root),
-            BigInt(proof!.nullifier_hash),
-            decodeAbiParameters(
-              parseAbiParameters('uint256[8]'),
-              proof!.proof as `0x${string}`
-            )[0],
-          ],
-
-        }
-      )
       await writeContractAsync({
         address: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as `0x${string}`,
-        account: account.address!,
+        account: address!,
         abi,
         functionName: 'verifyPublicAddress',
         args: [
-          account.address!,
+          address!,
           BigInt(proof!.merkle_root),
           BigInt(proof!.nullifier_hash),
           decodeAbiParameters(
@@ -57,10 +45,10 @@ export default function Home() {
   };
 
   useEffect(()=>{
-    if(account){
+    if(isConnected){
       router.push('/dashboard')
     }
-  },[account])
+  },[isConnected])
   return (
     <main className="flex min-h-screen flex-col gap-10 items-center justify-center">
 
