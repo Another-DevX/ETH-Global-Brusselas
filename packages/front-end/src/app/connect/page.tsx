@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Button, Link, Spinner } from '@nextui-org/react'
 import axios from 'axios'
 import { createConfig, http, useAccount } from 'wagmi'
-import { DynamicConnectButton, useIsLoggedIn } from '@dynamic-labs/sdk-react-core'
+import { DynamicConnectButton, DynamicWidget, useIsLoggedIn } from '@dynamic-labs/sdk-react-core'
 import type { Address } from 'viem'
 import { useEnsName } from 'wagmi'
 import { mainnet } from 'viem/chains'
@@ -24,9 +24,10 @@ function Page() {
     const { push } = useRouter()
     const [isConnecting, setIsConnecting] = useState(false)
     const [receipt, setReceipt] = useState('')
-    const { address } = useAccount()
+    const { address, isConnected } = useAccount()
+    const isLoggedIn = useIsLoggedIn()
     const connector = searchParams.get('address')
-    const isLoggedIn = useIsLoggedIn();
+
 
     const config = createConfig({
         chains: [mainnet],
@@ -64,6 +65,8 @@ function Page() {
             setIsConnecting(false)
         } catch (e) {
             console.error(e)
+            setIsConnecting(false)
+            alert(e)
         }
     }
 
@@ -71,23 +74,17 @@ function Page() {
     if (typeof window !== "undefined") return (
         <div className='min-h-screen flex justify-center items-center flex-col gap-4'>
             <h2 className='text-lg font-semibold text-center'>Do you want to connect with {result.data ? result.data : `${connector!.slice(0, 4)}...${connector!.slice(-4)}`}? <br /> 🤝</h2>
+            <DynamicWidget />
 
             {
-                isLoggedIn ? <div className='flex gap-2'>
+                isConnected && isLoggedIn && <div className='flex gap-2'>
                     <Button variant='shadow' color='primary' onClick={handleConnect} isLoading={isConnecting}>
                         Connect
                     </Button>
                     <Button variant='shadow' color='danger' >
                         Cancel
                     </Button>
-                </div> :
-                    <DynamicConnectButton>
-                        <div className="px-4 py-2  bg-default rounded-md">
-                            Log-In
-                        </div>
-                    </DynamicConnectButton>
-
-
+                </div>
             }
             <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
                 <ModalContent>

@@ -36,8 +36,8 @@ function Providers({ children }: { children: React.ReactNode }) {
                 walletConnectors: [EthereumWalletConnectors],
             }}
         >
-            <WagmiProvider config={config}>
-                <ApolloProvider client={client}>
+            <ApolloProvider client={client}>
+                <WagmiProvider config={config}>
                     <QueryClientProvider client={queryClient}>
                         <DynamicWagmiConnector>
 
@@ -47,8 +47,8 @@ function Providers({ children }: { children: React.ReactNode }) {
                         </DynamicWagmiConnector>
 
                     </QueryClientProvider>
-                </ApolloProvider>
-            </WagmiProvider>
+                </WagmiProvider>
+            </ApolloProvider>
         </DynamicContextProvider>
 
     )
