@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import { useDashboardContext } from './layout'
+import { useDashboardContext } from './config'
 
 function Page() {
   const depth = useDashboardContext()

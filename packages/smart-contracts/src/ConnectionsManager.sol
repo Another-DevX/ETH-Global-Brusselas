@@ -85,7 +85,7 @@ contract ConnectionManager {
     }
 
     function boost(address connector, address recipient) internal {
-        identityPoints.mint(recipent, 1e18 * boosts[connector]);
+        identityPoints.mint(recipient, 1e18 * boosts[connector]);
         boosts[connector] += 1;
     }
 }

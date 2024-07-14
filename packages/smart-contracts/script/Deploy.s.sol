@@ -23,13 +23,8 @@ contract Deploy is Script {
             cm
         );
         vm.stopBroadcast();
-        console.log(
-            "ConnectionManager deployed at: ",
-            address(cm),
-            "Resolver deployed at: ",
-            address(resolver),
-            "IdentityPoints deployed at: ",
-            address(ip)
-        );
+        console.log("ConnectionManager deployed at: ", address(cm));
+        console.log("Resolver deployed at: ", address(resolver));
+        console.log("IdentityPoints deployed at: ", address(ip));
     }
 }

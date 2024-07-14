@@ -24,7 +24,7 @@ export async function POST(req: Request) {
       
 
     const tx = await eas.attest({
-        schema:'0x9a8e201f42d02573431088e8a985a5ffc7a874fddd13fd709dbb4494e5eaec96',
+        schema:'0x772c105e09a3fe49aab00cc84e0b54f3e905aafb4e7eda242e22ca29f7427990',
         data: {
           recipient,
           data: encodedData,
@@ -41,6 +41,6 @@ export async function POST(req: Request) {
     }
     catch(e){
       console.error(e)
-      return NextResponse.error(e)
+      return NextResponse.error()
     }
 }

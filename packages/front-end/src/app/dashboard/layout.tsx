@@ -12,12 +12,8 @@ import { DynamicConnectButton, DynamicWidget, useIsLoggedIn, useWalletItemAction
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
 import { Avatar, Identity, Name, Badge, Address } from '@coinbase/onchainkit/identity';
+import { DashboardContext } from "./config";
 
-export const DashboardContext = createContext(3);
-
-export const useDashboardContext = () => {
-    return useContext(DashboardContext);
-}
 
 export default function DashboardLayout({
     children,
