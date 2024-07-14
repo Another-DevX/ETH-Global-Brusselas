@@ -54,7 +54,7 @@ const mapping = {
 };
 
 
-export const transformData = (data: any, depth: number = 4, currentNode: string) => {
+export const transformData = (data: any, depth: number = 4, currentNode: string | null) => {
     const nodes = new Set<string>();
     const links: { source: string, target: string }[] = [];
     currentNode = currentNode ?? data.connections[0].connector;
