@@ -47,18 +47,61 @@ function abreviarTexto(texto) {
     const ultimosCuatro = texto.slice(-4);
     return `${primerosSeis}...${ultimosCuatro}`;
 }
+const getNode = (id: string, currentNode: string) => {
 
-const mapping = {
-    "0x5E15DBf75d3819Dd9DA31Fc159Ce5bc5f3751AB0": { "ens": "vitalik.eth", "quality": "worldid" },
-    "0xA081e1dA16133bB4Ebc7Aab1A9B0588A48D15138" : { "ens": "jampol.eth", "quality": "worldid" }
+
+    if (id.toUpperCase() == "0x5E15DBf75d3819Dd9DA31Fc159Ce5bc5f3751AB0".toUpperCase()) {
+        console.log("Lucho");
+        return {
+            id,
+            name: abreviarTexto(id),
+            label: "anotherdev.eth",
+            color: (id.toUpperCase() == currentNode.toUpperCase() ? "#FF0000" : "#A6CEE3"),
+            val: 15
+        }
+
+    }
+    if (id.toUpperCase() == "0xA081e1dA16133bB4Ebc7Aab1A9B0588A48D15138".toUpperCase()) {
+        console.log("Juampi");
+        return {
+            id,
+            name: abreviarTexto(id),
+            label: "jampol.eth",
+            color: (id.toUpperCase() == currentNode.toUpperCase() ? "#FF0000" : "#A6CEE3"),
+            val: 15
+        }
+    }
+    return {
+        id,
+        name: abreviarTexto(id),
+        label: id,
+        color: (id.toUpperCase() == currentNode.toUpperCase() ? "#FF0000" : "#A6CEE3"),
+        val: 15
+    }
+
+};
+const getLink = (source: string, target: string) => {
+    if (source.toUpperCase() == "0x5E15DBf75d3819Dd9DA31Fc159Ce5bc5f3751AB0".toUpperCase() ||
+        target.toUpperCase() == "0x5E15DBf75d3819Dd9DA31Fc159Ce5bc5f3751AB0".toUpperCase() ||
+        source.toUpperCase() == "0xA081e1dA16133bB4Ebc7Aab1A9B0588A48D15138".toUpperCase() ||
+        target.toUpperCase() == "0xA081e1dA16133bB4Ebc7Aab1A9B0588A48D15138".toUpperCase()) {
+
+        return {
+            source, target,
+            color: "#FF0000",
+            width: 5
+        }
+    }
+    return { source, target, color: "#000", width: 2 };
+
 };
 
 
 export const transformData = (data: any, depth: number = 4, currentNode: string | null) => {
     const nodes = new Set<string>();
     const links: { source: string, target: string }[] = [];
-    currentNode = currentNode ?? data.connections[0].connector;
-    const filteredData = subGraph(data.connections, currentNode, depth);
+    const currentNode1 = currentNode ?? data.connections[0].connector;
+    const filteredData = subGraph(data.connections, currentNode1, depth);
 
 
     filteredData.forEach((connection: any) => {
@@ -67,22 +110,14 @@ export const transformData = (data: any, depth: number = 4, currentNode: string 
 
         nodes.add(source);
         nodes.add(target);
-        links.push({
+        links.push(getLink(
             source,
-            target,
-            color: getRandomHexColor(),
-            linkWidth: 2
-        });
+            target));
     });
 
-    const nodesArray = Array.from(nodes).map(id => ({
-        id,
-        name: abreviarTexto(id),
-        label: id,
-        color: (id == currentNode ? "#FF0000" : "#A6CEE3"),
-        val: 15
-    }));
-    console.log('Pintado', currentNode);
+    const nodesArray = Array.from(nodes).map(id => getNode(id, currentNode1));
+    console.log(nodesArray);
+
     let result = {
         nodes: nodesArray,
         links: links

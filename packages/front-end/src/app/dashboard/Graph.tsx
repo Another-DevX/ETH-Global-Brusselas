@@ -15,10 +15,10 @@ import { useAccount } from 'wagmi';
 function nodePaint({ id, x, y, color, name }: { id: number, x: number, y: number, color: string, name: string }, ctx: any) {
   ctx.fillStyle = color;
   ctx.beginPath();
-  ctx.arc(x, y, 10, 0, 2 * Math.PI, false);
+  ctx.arc(x, y, 10, 0, 5 * Math.PI, false);
   ctx.fill();  // circle
   ctx.fillStyle = "#000000";
-  ctx.font = '3px Sans-Serif';
+  ctx.font = '2.7px Sans-Serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText(name, x, y);  // text
@@ -95,7 +95,7 @@ const Graph = () => {
       height={window.screen.height - 230}
       onNodeClick={handleClick}
       nodeCanvasObject={(node, ctx) => nodePaint(node, ctx)}
-      // nodePointerAreaPaint={nodePaint}
+      linkWidth='width'
       nodeLabel='label'
       graphData={graphData}
     />
