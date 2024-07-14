@@ -45,7 +45,7 @@ const Graph = () => {
   }
 `;
 
-  const { error, data, loading } = useQuery(GET_CONNECTIONS);
+  const { error, data, loading } = useQuery(GET_CONNECTIONS, { pollInterval: 5000 });
 
 
   const fgRef = useRef<any | null>(null);
@@ -80,7 +80,7 @@ const Graph = () => {
     const graphData = transformData(data, depth, currentNode)
     console.debug(graphData)
     setGraphData(graphData);
-  }, [loading, currentNode, depth])
+  }, [loading, currentNode, depth, data])
   const isClient = useIsClient();
 
 
