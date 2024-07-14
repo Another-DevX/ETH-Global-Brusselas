@@ -4,7 +4,7 @@ import { useSearchParams } from 'next/navigation'
 import { useRouter } from 'next/navigation'
 import { Button, Spinner } from '@nextui-org/react'
 import axios from 'axios'
-import { useAccount } from 'wagmi'
+import { createConfig, http, useAccount } from 'wagmi'
 import { DynamicConnectButton, useIsLoggedIn } from '@dynamic-labs/sdk-react-core'
 import type { Address } from 'viem'
 import { useEnsName } from 'wagmi'
@@ -19,9 +19,19 @@ function Page() {
     const connector = searchParams.get('address')
     const isLoggedIn = useIsLoggedIn();
 
+    const config = createConfig({
+        chains: [mainnet],
+        transports: {
+          [mainnet.id]: http('https://rpc.ankr.com/eth'),
+        },
+      })
+
+    
+
     const result = useEnsName({
         address: connector as Address,
-        chainId: mainnet.id
+        chainId: mainnet.id,
+        config
     })
 
     useEffect(() => {
@@ -52,7 +62,7 @@ function Page() {
     console.debug(result)
     return (
         <div className='min-h-screen flex justify-center items-center flex-col gap-4'>
-            <h2 className='text-lg font-semibold text-center'>Do you want to connect with {result.data ? result.data : `${connector.slice(0,4)}...${connector.slice(-4)}`}?</h2>
+            <h2 className='text-lg font-semibold text-center'>Do you want to connect with {result.data ? result.data : `${connector.slice(0, 4)}...${connector.slice(-4)}`}?</h2>
 
             {
                 isLoggedIn ? <div className='flex gap-2'>
