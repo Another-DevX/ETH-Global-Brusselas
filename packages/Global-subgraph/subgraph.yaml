@@ -8,7 +8,7 @@ dataSources:
     name: ConnectionManager
     network: base-sepolia
     source:
-      address: "0xaebbccaf2c89cbc983f61a82d08898cbac823c53"
+      address: "0x3aC58A6522760f3DE12c24BB38119243746d81CA"
       abi: ConnectionManager
       startBlock: 12557004
     mapping:
