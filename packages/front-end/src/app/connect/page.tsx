@@ -59,7 +59,7 @@ function Page() {
                 recipient: connector
             })
             console.debug(response)
-            setReceipt(response.data)
+            setReceipt(response.data.receipt)
             onOpen()
             setIsConnecting(false)
         } catch (e) {

@@ -37,7 +37,7 @@ export async function POST(req: Request) {
 
       const receipt = await tx.wait()
       console.debug(receipt)
-      return NextResponse.json({ receipt });
+      return NextResponse.json({ receipt: receipt?.hash });
     }
     catch(e){
       console.error(e)
