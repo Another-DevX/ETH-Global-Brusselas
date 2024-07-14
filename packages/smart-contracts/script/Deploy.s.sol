@@ -6,14 +6,17 @@ import {ConnectionManager} from "../src/ConnectionsManager.sol";
 import {IWorldID} from "../src/interfaces/IWorldID.sol";
 import {Resolver} from "../src/Resolver.sol";
 import {IEAS} from "eas-contracts/IEAS.sol";
+import {IdentityPoints} from "../src/IdentityPoints.sol";
 
 contract Deploy is Script {
     function run() public {
         vm.startBroadcast();
+        IdentityPoints ip = new IdentityPoints();
         ConnectionManager cm = new ConnectionManager(
             IWorldID(0x42FF98C4E85212a5D31358ACbFe76a621b50fC02),
             "app_staging_4989e6a8b385ae6116fb36aeae08c250",
-            "verify-public-address"
+            "verify-public-address",
+            ip
         );
         Resolver resolver = new Resolver(
             IEAS(0x4200000000000000000000000000000000000021),
@@ -24,7 +27,9 @@ contract Deploy is Script {
             "ConnectionManager deployed at: ",
             address(cm),
             "Resolver deployed at: ",
-            address(resolver)
+            address(resolver),
+            "IdentityPoints deployed at: ",
+            address(ip)
         );
     }
 }
