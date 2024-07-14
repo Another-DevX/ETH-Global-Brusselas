@@ -11,6 +11,7 @@ import { SearchIcon } from "@/components/SearchIcon";
 import { DynamicConnectButton, DynamicWidget, useIsLoggedIn, useWalletItemActions } from "@dynamic-labs/sdk-react-core";
 import { useDynamicContext } from "@dynamic-labs/sdk-react-core";
 import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
+import { Avatar, Identity, Name, Badge, Address } from '@coinbase/onchainkit/identity';
 
 export const DashboardContext = createContext(3);
 
@@ -37,7 +38,6 @@ export default function DashboardLayout({
 
     const { writeContractAsync } = useWriteContract()
     const account = useAccount()
-
     const router = useRouter()
     const { handleLogOut } = useDynamicContext();
 
@@ -120,11 +120,16 @@ export default function DashboardLayout({
                                             </IDKitWidget>
                                     }
                                     <DropdownTrigger>
-
-                                        <Button
-                                            variant="bordered"
-                                        >
-                                            anotherdev.eth
+                                        <Button className="p-0">
+                                            <Identity
+                                                className="bg-none px-2 py-1"
+                                                address={account.address}
+                                                schemaId="0xf8b05c79f090979bf4a80270aba232dff11a10d9ca55c4f88de95317970f0de9"
+                                            >
+                                                <Avatar className="mr-2" />
+                                                <Name />
+                                                <Address />
+                                            </Identity>
                                         </Button>
                                     </DropdownTrigger>
                                 </div>
