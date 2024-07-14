@@ -31,7 +31,7 @@ function nodePaint({ id, x, y, color, name }: { id: number, x: number, y: number
 const Graph = () => {
   const depth = useDashboardContext()
   const { address } = useAccount();
-  const [currentNode, setCurrentNode] = useState(address);
+  const [currentNode, setCurrentNode] = useState(address?.toLowerCase() as string);
 
 
   const GET_CONNECTIONS = gql`

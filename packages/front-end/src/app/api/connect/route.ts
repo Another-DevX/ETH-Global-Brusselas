@@ -24,7 +24,7 @@ export async function POST(req: Request) {
       
 
     const tx = await eas.attest({
-        schema:'0x772c105e09a3fe49aab00cc84e0b54f3e905aafb4e7eda242e22ca29f7427990',
+        schema:'0x8db4dda869588fc7cfece8882055b4e8fa3388e2b34862e3783343871b564110',
         data: {
           recipient,
           data: encodedData,
@@ -37,7 +37,7 @@ export async function POST(req: Request) {
 
       const receipt = await tx.wait()
       console.debug(receipt)
-      return NextResponse.json({ receipt });
+      return NextResponse.json({ receipt: receipt?.hash });
     }
     catch(e){
       console.error(e)
