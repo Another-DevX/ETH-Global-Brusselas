@@ -6,7 +6,7 @@ import { gql, HttpLink, useQuery } from '@apollo/client';
 import { transformData } from '@/services/graph-service';
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem, Button, Input } from "@nextui-org/react";
 
-import { useDashboardContext } from './layout'
+import { useDashboardContext } from './config'
 
 
 
@@ -32,17 +32,20 @@ const Page = () => {
   const fgRef = useRef();
   const handleClick = useCallback(node => {
     console.log(node);
-    setCurrentNode(node.id);
+    
 
     // Aim at node from outside it       
 
     fgRef.current.centerAt(
       node.x,
       node.y, // new position
-      3000  // ms transition duration
+      500  // ms transition duration
     );
-    // fgRef.current.zoomToFit(
-    //   500, 200);
+    setTimeout(() => {
+      fgRef.current.zoomToFit(500, 200);
+      setCurrentNode(node.id);
+    }, 500);
+
 
 
   }, [fgRef]);
@@ -50,7 +53,7 @@ const Page = () => {
   const [graphData, setGraphData] = useState<null | any>(null);
 
   useEffect(() => {
-    if (loading ) return;
+    if (loading) return;
     const graphData = transformData(data, depth, currentNode)
     console.debug(graphData)
     setGraphData(graphData);
@@ -60,11 +63,23 @@ const Page = () => {
 
   if (loading || !graphData) return <p>Loading...</p>
 
+  const physics = {
+    timeStep: 2,
+    dimensions: 2,
+    gravity: -12,
+    theta: 0.8,
+    springLength: 20,
+    springCoefficient: 0.1,
+    dragCoefficient: 0.1,
+  };
+
   return (
     <ForceGraph2D
       ref={fgRef}
       onNodeClick={handleClick}
-      /* nodeCanvasObject={(node, ctx, globalScale) => {
+
+      /* ngraphPhysics={physics}
+      nodeCanvasObject={(node, ctx, globalScale) => {
          const label = node.name;
          const fontSize = 12 / globalScale;
          ctx.font = `${fontSize}px Sans-Serif`;

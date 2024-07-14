@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.10.8",
+    "@coinbase/onchainkit": "^0.25.1",
     "@dynamic-labs/ethereum": "^2.3.1",
     "@dynamic-labs/sdk-react-core": "^2.3.1",
     "@dynamic-labs/wagmi-connector": "^2.3.1",

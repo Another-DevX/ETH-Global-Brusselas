@@ -13,12 +13,12 @@ import { useRouter } from "next/navigation";
 export default function Home() {
 
   const { writeContractAsync } = useWriteContract()
-  const {isConnected, address} = useAccount()
+  const { isConnected, address } = useAccount()
   const router = useRouter()
 
 
 
-  
+
   const verifyProof = async (proof: ISuccessResult) => {
     try {
       await writeContractAsync({
@@ -44,18 +44,18 @@ export default function Home() {
     console.log("Success")
   };
 
-  useEffect(()=>{
-    if(isConnected){
+  useEffect(() => {
+    if (isConnected) {
       router.push('/dashboard')
     }
-  },[isConnected])
+  }, [isConnected])
   return (
     <main className="flex min-h-screen flex-col gap-10 items-center justify-center">
-
+      <h2 className="text-4xl font-bold text-center" ><span className="title-color" >PROOF PALS</span><br /> 🤝</h2>
       <h2 className="text-4xl font-bold text-center">Welcome to the new era of <br /> Social Media</h2>
-      <DynamicWidget 
+      <DynamicWidget
 
-      variant="dropdown"
+        variant="dropdown"
       />
 
 
