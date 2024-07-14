@@ -67,16 +67,10 @@ function Page() {
         }
     }
 
-    if (!connector) return null
-    if (result.isLoading) return <div className='min-h-screen flex justify-center items-center '>
-
-        <Spinner size='lg' label="Loading..." color="primary" />
-
-    </div>
-    console.debug(result)
-    return (
+    if (result.isLoading) return <div className='min-h-screen flex justify-center items-center '>  <Spinner size='lg' label="Loading..." color="primary" /> </div>
+    if (typeof window !== "undefined") return (
         <div className='min-h-screen flex justify-center items-center flex-col gap-4'>
-            <h2 className='text-lg font-semibold text-center'>Do you want to connect with {result.data ? result.data : `${connector.slice(0, 4)}...${connector.slice(-4)}`}? <br /> 🤝</h2>
+            <h2 className='text-lg font-semibold text-center'>Do you want to connect with {result.data ? result.data : `${connector!.slice(0, 4)}...${connector!.slice(-4)}`}? <br /> 🤝</h2>
 
             {
                 isLoggedIn ? <div className='flex gap-2'>
