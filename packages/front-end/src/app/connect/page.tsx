@@ -2,24 +2,33 @@
 import React, { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useRouter } from 'next/navigation'
-import { Button } from '@nextui-org/react'
+import { Button, Spinner } from '@nextui-org/react'
 import axios from 'axios'
 import { useAccount } from 'wagmi'
 import { DynamicConnectButton, useIsLoggedIn } from '@dynamic-labs/sdk-react-core'
+import type { Address } from 'viem'
+import { useEnsName } from 'wagmi'
+import { mainnet } from 'viem/chains'
 
 function Page() {
     const searchParams = useSearchParams()
+
     const { push } = useRouter()
     const [isConnecting, setIsConnecting] = useState(false)
     const { address } = useAccount()
     const connector = searchParams.get('address')
     const isLoggedIn = useIsLoggedIn();
 
+    const result = useEnsName({
+        address: connector as Address,
+        chainId: mainnet.id
+    })
+
     useEffect(() => {
         if (!connector) {
             push('/dashboard')
         }
-    }, [connector])  
+    }, [connector])
     const handleConnect = async () => {
 
         try {
@@ -34,9 +43,16 @@ function Page() {
             console.error(e)
         }
     }
+    if (!connector) return null
+    if (result.isLoading) return <div className='min-h-screen flex justify-center items-center '>
+
+        <Spinner size='lg' label="Loading..." color="primary" />
+
+    </div>
+    console.debug(result)
     return (
         <div className='min-h-screen flex justify-center items-center flex-col gap-4'>
-            <h2 className='text-lg font-semibold text-center'>Do you want to connect with anotherdev.eth?</h2>
+            <h2 className='text-lg font-semibold text-center'>Do you want to connect with {result.data ? result.data : connector}?</h2>
 
             {
                 isLoggedIn ? <div className='flex gap-2'>

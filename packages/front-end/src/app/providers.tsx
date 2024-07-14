@@ -1,7 +1,7 @@
 'use client'
 import React from 'react'
 import { createConfig, http, WagmiProvider } from 'wagmi'
-import { baseSepolia } from 'wagmi/chains'
+import { baseSepolia, mainnet } from 'wagmi/chains'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { NextUIProvider } from '@nextui-org/react'
 import { DynamicContextProvider } from '@dynamic-labs/sdk-react-core'
@@ -14,10 +14,11 @@ const queryClient = new QueryClient()
 
 
 export const config = createConfig({
-    chains: [baseSepolia],
+    chains: [baseSepolia, mainnet],
     multiInjectedProviderDiscovery: false,
     transports: {
         [baseSepolia.id]: http(),
+        [mainnet.id]: http()
     },
 })
 
