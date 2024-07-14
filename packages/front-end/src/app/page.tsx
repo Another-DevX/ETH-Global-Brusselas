@@ -52,7 +52,7 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col gap-10 items-center justify-center">
       <h2 className="text-4xl font-bold text-center" ><span className="title-color" >PROOF PALS</span><br /> 🤝</h2>
-      <h2 className="text-4xl font-bold text-center">Welcome to the new era of <br /> Social Media</h2>
+      <h2 className="text-4xl font-bold text-center">Your network, verified!</h2>
       <DynamicWidget
 
         variant="dropdown"

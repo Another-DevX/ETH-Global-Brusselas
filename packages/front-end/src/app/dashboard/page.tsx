@@ -10,6 +10,22 @@ import { useDashboardContext } from './config'
 
 
 
+function nodePaint({ id, x, y, color, name }, ctx) {
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  ctx.arc(x, y, 10, 0, 2 * Math.PI, false);
+  ctx.fill();  // circle
+  ctx.fillStyle = "#000000";
+  ctx.font = '3px Sans-Serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(name, x, y);  // text
+
+}
+
+
+
+
 const Page = () => {
   const depth = useDashboardContext()
   const [currentNode, setCurrentNode] = useState(null);
@@ -31,9 +47,9 @@ const Page = () => {
 
   const fgRef = useRef();
   const handleClick = useCallback(node => {
-    console.log(node);
     
 
+    node.color = "#FF0000";
     // Aim at node from outside it       
 
     fgRef.current.centerAt(
@@ -42,8 +58,10 @@ const Page = () => {
       500  // ms transition duration
     );
     setTimeout(() => {
-      fgRef.current.zoomToFit(500, 200);
-      setCurrentNode(node.id);
+      fgRef.current.zoomToFit(500, 100);
+      setTimeout(() => {
+        setCurrentNode(node.id);
+      }, 500);
     }, 500);
 
 
@@ -61,49 +79,17 @@ const Page = () => {
 
 
 
-  if (loading || !graphData) return <p>Loading...</p>
+  if (loading || !graphData) return <span className='centered-span'>Loading...</span>
 
-  const physics = {
-    timeStep: 2,
-    dimensions: 2,
-    gravity: -12,
-    theta: 0.8,
-    springLength: 20,
-    springCoefficient: 0.1,
-    dragCoefficient: 0.1,
-  };
+
 
   return (
     <ForceGraph2D
       ref={fgRef}
       onNodeClick={handleClick}
+      nodeCanvasObject={(node, ctx) => nodePaint(node, ctx)}
+      // nodePointerAreaPaint={nodePaint}
 
-      /* ngraphPhysics={physics}
-      nodeCanvasObject={(node, ctx, globalScale) => {
-         const label = node.name;
-         const fontSize = 12 / globalScale;
-         ctx.font = `${fontSize}px Sans-Serif`;
-         const textWidth = ctx.measureText(label).width;
-         const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.2); // some padding
- 
-         ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-         ctx.fillRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2, ...bckgDimensions);
- 
-         ctx.textAlign = 'center';
-         ctx.textBaseline = 'middle';
-         ctx.fillStyle = node.color;
-         ctx.fillText(label, node.x, node.y);
- 
-         node.__bckgDimensions = bckgDimensions; // to re-use in nodePointerAreaPaint
-       }}
-       nodePointerAreaPaint={(node, color, ctx) => {
-         ctx.fillStyle = color;
-         const bckgDimensions = node.__bckgDimensions;
-         bckgDimensions && ctx.fillRect(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[1] / 2, ...bckgDimensions);
-         ctx.beginPath();
-         ctx.arc(node.x - bckgDimensions[0] / 2, node.y - bckgDimensions[0] / 2, 5, 0, 2 * Math.PI, false);
-         ctx.fill();
-       }}*/
       nodeLabel='name'
       graphData={graphData}
     />
