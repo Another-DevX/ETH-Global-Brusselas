@@ -56,8 +56,8 @@ function Page() {
         try {
             setIsConnecting(true)
             const response = await axios.post('/api/connect', {
-                user: address,
-                recipient: connector
+                user: connector,
+                recipient: address
             })
             console.debug(response)
             setReceipt(response.data.receipt)
