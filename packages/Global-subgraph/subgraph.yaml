@@ -8,9 +8,9 @@ dataSources:
     name: ConnectionManager
     network: base-sepolia
     source:
-      address: "0x3aC58A6522760f3DE12c24BB38119243746d81CA"
+      address: "0xAF8773eE583aAEBC481960bDf0B33641Af977aB3"
       abi: ConnectionManager
-      startBlock: 12557004
+      startBlock: 13313987
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7

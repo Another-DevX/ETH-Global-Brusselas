@@ -78,14 +78,21 @@ contract ConnectionManager {
     function connect(address connector, address recipient) public {
         require(!connections[connector][recipient] && !connections[recipient][connector], "The users are connected yet");
         connections[connector][recipient] = true;
-        if(_isVerified[connector] && _isVerified[recipient]) {
+
             boost(connector, recipient);
-        }
         emit Connection(connector, recipient);
     }
 
     function boost(address connector, address recipient) internal {
+        if(_isVerified[connector] && _isVerified[recipient]) {
+
+        identityPoints.mint(recipient, 1e18 * boosts[connector] * 2);
+        boosts[connector] += 2;
+        }else{
+
         identityPoints.mint(recipient, 1e18 * boosts[connector]);
         boosts[connector] += 1;
+
+        }
     }
 }
